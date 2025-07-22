@@ -7,6 +7,7 @@ import {
   ExternalLink, Copy, Lock, Unlock, Target, Briefcase, FileText,
   Database, GitBranch, Timer, Repeat, Network
 } from 'lucide-react';
+import { StakingPage } from './index';
 
 /* ---------- Color themes ---------- */
 const themes = [
@@ -312,84 +313,90 @@ const Web3RWAPlatform = () => {
         </header>
 
         <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
-          {/* Stats */}
-          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {[
-              { icon: DollarSign, value: '$847.2M', label: 'Total Value Locked', change: '+12.4% (24h)' },
-              { icon: Activity, value: '$156.8M', label: '24h Volume', change: '+8.7% (24h)' },
-              { icon: Coins, value: '14.7%', label: 'Avg APY', change: 'Across all pools' },
-              { icon: Users, value: '28,456', label: 'Active Users', change: '+5.2% (7d)' },
-            ].map((stat, i) => (
-              <div key={i} className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="bg-blue-100 dark:bg-blue-950 w-10 h-10 rounded-lg flex items-center justify-center"><stat.icon className="w-5 h-5 text-blue-600" /></div>
-                  <TrendingUp className="w-4 h-4 text-green-500" />
+          {activeTab === 'staking' ? (
+            <StakingPage />
+          ) : (
+            <>
+              {/* Stats */}
+              <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                {[
+                  { icon: DollarSign, value: '$847.2M', label: 'Total Value Locked', change: '+12.4% (24h)' },
+                  { icon: Activity, value: '$156.8M', label: '24h Volume', change: '+8.7% (24h)' },
+                  { icon: Coins, value: '14.7%', label: 'Avg APY', change: 'Across all pools' },
+                  { icon: Users, value: '28,456', label: 'Active Users', change: '+5.2% (7d)' },
+                ].map((stat, i) => (
+                  <div key={i} className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="bg-blue-100 dark:bg-blue-950 w-10 h-10 rounded-lg flex items-center justify-center"><stat.icon className="w-5 h-5 text-blue-600" /></div>
+                      <TrendingUp className="w-4 h-4 text-green-500" />
+                    </div>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{stat.value}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</p>
+                    <p className="text-xs text-green-600 dark:text-green-400 mt-1">{stat.change}</p>
+                  </div>
+                ))}
+              </section>
+
+              {/* Search & filters */}
+              <section className="flex flex-col lg:flex-row gap-4 mb-6">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input type="text" placeholder="Search tokenized assets, pools, or projects..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-900" />
                 </div>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{stat.value}</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</p>
-                <p className="text-xs text-green-600 dark:text-green-400 mt-1">{stat.change}</p>
-              </div>
-            ))}
-          </section>
+                <div className="flex gap-2">
+                  <button className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 px-4 py-3 rounded-lg flex items-center gap-2 transition-all"><Filter className="w-4 h-4" />Filters</button>
+                  <button className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 px-4 py-3 rounded-lg flex items-center gap-2 transition-all"><BarChart3 className="w-4 h-4" />Analytics</button>
+                </div>
+              </section>
 
-          {/* Search & filters */}
-          <section className="flex flex-col lg:flex-row gap-4 mb-6">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input type="text" placeholder="Search tokenized assets, pools, or projects..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-900" />
-            </div>
-            <div className="flex gap-2">
-              <button className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 px-4 py-3 rounded-lg flex items-center gap-2 transition-all"><Filter className="w-4 h-4" />Filters</button>
-              <button className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 px-4 py-3 rounded-lg flex items-center gap-2 transition-all"><BarChart3 className="w-4 h-4" />Analytics</button>
-            </div>
-          </section>
+              {/* Asset type filter */}
+              <section className="mb-8">
+                <div className="flex flex-wrap gap-2">
+                  {assetTypes.map(type => {
+                    const Icon = type.icon;
+                    return (
+                      <button key={type.id} onClick={() => setSelectedAssetType(type.id)} className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${selectedAssetType === type.id ? 'bg-blue-600 text-white shadow-lg' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700'}`}>
+                        <Icon className="w-4 h-4" />{type.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
 
-          {/* Asset type filter */}
-          <section className="mb-8">
-            <div className="flex flex-wrap gap-2">
-              {assetTypes.map(type => {
-                const Icon = type.icon;
-                return (
-                  <button key={type.id} onClick={() => setSelectedAssetType(type.id)} className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${selectedAssetType === type.id ? 'bg-blue-600 text-white shadow-lg' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700'}`}>
-                    <Icon className="w-4 h-4" />{type.label}
-                  </button>
-                );
-              })}
-            </div>
-          </section>
+              {/* Asset grid */}
+              <section className="mb-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Tokenized Assets</h2>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Sort by:</span>
+                    <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm">
+                      <option value="apy">Highest APY</option>
+                      <option value="tvl">Highest TVL</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {sortedAssets.length ? sortedAssets.map(token => <TokenCard key={token.id} token={token} />) : <div className="col-span-full text-center text-gray-500 dark:text-gray-400 py-12">No assets found.</div>}
+                </div>
+              </section>
 
-          {/* Asset grid */}
-          <section className="mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Tokenized Assets</h2>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Sort by:</span>
-                <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm">
-                  <option value="apy">Highest APY</option>
-                  <option value="tvl">Highest TVL</option>
-                </select>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {sortedAssets.length ? sortedAssets.map(token => <TokenCard key={token.id} token={token} />) : <div className="col-span-full text-center text-gray-500 dark:text-gray-400 py-12">No assets found.</div>}
-            </div>
-          </section>
-
-          {/* Quick actions */}
-          <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { icon: ArrowUpDown, title: 'DEX Trading', desc: 'Swap RWA tokens with minimal slippage', from: 'from-blue-600 to-purple-600' },
-              { icon: Droplets, title: 'Liquidity Pools', desc: 'Provide liquidity and earn fees', from: 'from-green-600 to-emerald-600' },
-              { icon: Lock, title: 'Yield Farming', desc: 'Stake LP tokens for maximum yields', from: 'from-orange-600 to-red-600' },
-            ].map(card => (
-              <div key={card.title} className={`bg-gradient-to-r ${card.from} rounded-xl p-6 text-white`}>
-                <div className="flex items-center justify-between mb-4"><card.icon className="w-8 h-8" /><ArrowRight className="w-5 h-5" /></div>
-                <h3 className="text-xl font-bold mb-2">{card.title}</h3>
-                <p className="mb-4">{card.desc}</p>
-                <button className="gradient-card-button px-4 py-2 rounded-lg font-semibold transition-all">Start</button>
-              </div>
-            ))}
-          </section>
+              {/* Quick actions */}
+              <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[
+                  { icon: ArrowUpDown, title: 'DEX Trading', desc: 'Swap RWA tokens with minimal slippage', from: 'from-blue-600 to-purple-600' },
+                  { icon: Droplets, title: 'Liquidity Pools', desc: 'Provide liquidity and earn fees', from: 'from-green-600 to-emerald-600' },
+                  { icon: Lock, title: 'Yield Farming', desc: 'Stake LP tokens for maximum yields', from: 'from-orange-600 to-red-600' },
+                ].map(card => (
+                  <div key={card.title} className={`bg-gradient-to-r ${card.from} rounded-xl p-6 text-white`}>
+                    <div className="flex items-center justify-between mb-4"><card.icon className="w-8 h-8" /><ArrowRight className="w-5 h-5" /></div>
+                    <h3 className="text-xl font-bold mb-2">{card.title}</h3>
+                    <p className="mb-4">{card.desc}</p>
+                    <button className="gradient-card-button px-4 py-2 rounded-lg font-semibold transition-all">Start</button>
+                  </div>
+                ))}
+              </section>
+            </>
+          )}
         </main>
       </div>
 
