@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
   Lock, Unlock, ArrowRight, Clock, Gift, PlusCircle, Repeat,
   ChevronDown, TrendingUp, DollarSign, Calendar, Settings, Bell, User,
@@ -49,6 +49,74 @@ const userStakes = [
   },
 ];
 
+const userRewards = [
+  {
+    asset: 'ONT',
+    availableRewards: 12.15,
+    totalEarned: 125.75,
+    apy: 7.46,
+    lastClaimed: '2024-03-15',
+    nextClaimDate: '2024-04-15',
+    stakingPeriod: '6 Month',
+    status: 'claimable',
+    usdValue: 847.32,
+    logo: '/ont.svg',
+    color: 'from-green-500 to-green-600'
+  },
+  {
+    asset: 'ADA',
+    availableRewards: 45.82,
+    totalEarned: 287.50,
+    apy: 8.65,
+    lastClaimed: '2024-03-10',
+    nextClaimDate: '2024-04-10',
+    stakingPeriod: '3 Month',
+    status: 'claimable',
+    usdValue: 1205.75,
+    logo: '/ada.svg',
+    color: 'from-blue-500 to-blue-600'
+  },
+  {
+    asset: 'SOL',
+    availableRewards: 2.35,
+    totalEarned: 18.90,
+    apy: 12.66,
+    lastClaimed: '2024-03-20',
+    nextClaimDate: '2024-04-20',
+    stakingPeriod: '12 Month',
+    status: 'claimable',
+    usdValue: 425.60,
+    logo: '/sol.svg',
+    color: 'from-purple-500 to-purple-600'
+  },
+  {
+    asset: 'DOT',
+    availableRewards: 0.00,
+    totalEarned: 156.25,
+    apy: 24.5,
+    lastClaimed: '2024-03-25',
+    nextClaimDate: '2024-04-25',
+    stakingPeriod: '6 Month',
+    status: 'pending',
+    usdValue: 0.00,
+    logo: '/dot.svg',
+    color: 'from-pink-500 to-pink-600'
+  },
+  {
+    asset: 'XRP',
+    availableRewards: 8.75,
+    totalEarned: 92.40,
+    apy: 15.47,
+    lastClaimed: '2024-03-12',
+    nextClaimDate: '2024-04-12',
+    stakingPeriod: '9 Month',
+    status: 'claimable',
+    usdValue: 312.85,
+    logo: '/xrp.svg',
+    color: 'from-indigo-500 to-indigo-600'
+  }
+];
+
 const StakingPage = () => {
   const [tab, setTab] = useState('offerings'); // offerings | my-stakes | rewards
   const [showStakingModal, setShowStakingModal] = useState(false);
@@ -64,6 +132,46 @@ const StakingPage = () => {
   const [stakesSortBy, setStakesSortBy] = useState('amount'); // amount | earned | endDate | asset
   const [stakesSortOrder, setStakesSortOrder] = useState<'asc' | 'desc'>('desc');
   const [stakesStatusFilter, setStakesStatusFilter] = useState('all'); // all | active | completed
+  
+  // Rewards sorting and filtering states
+  const [rewardsSortBy, setRewardsSortBy] = useState('availableRewards'); // availableRewards | totalEarned | apy | asset | usdValue
+  const [rewardsSortOrder, setRewardsSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [rewardsStatusFilter, setRewardsStatusFilter] = useState('all'); // all | claimable | pending
+  const [selectedRewards, setSelectedRewards] = useState<string[]>([]); // For bulk claiming
+  const [showStakedDropdown, setShowStakedDropdown] = useState(false); // For total staked dropdown
+  const stakedDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (stakedDropdownRef.current && !stakedDropdownRef.current.contains(event.target as Node)) {
+        setShowStakedDropdown(false);
+      }
+    };
+
+    if (showStakedDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showStakedDropdown]);
+
+  // Calculate staked amounts by asset
+  const stakedByAsset = useMemo(() => {
+    const assetMap = new Map<string, number>();
+    userStakes.forEach(stake => {
+      const currentAmount = assetMap.get(stake.asset) || 0;
+      assetMap.set(stake.asset, currentAmount + stake.amount);
+    });
+    return Array.from(assetMap.entries()).map(([asset, amount]) => ({
+      asset,
+      amount,
+      logo: stakingOffers.find(offer => offer.asset === asset)?.logo || '',
+      color: stakingOffers.find(offer => offer.asset === asset)?.color || 'from-gray-500 to-gray-600'
+    })).sort((a, b) => b.amount - a.amount);
+  }, [userStakes]);
 
   // Memoized sorted and filtered offerings
   const sortedOfferings = useMemo(() => {
@@ -163,6 +271,58 @@ const StakingPage = () => {
     });
   }, [stakesSortBy, stakesSortOrder, stakesStatusFilter]);
 
+  // Memoized sorted and filtered rewards
+  const sortedRewards = useMemo(() => {
+    let filtered = userRewards;
+    
+    // Apply status filter
+    if (rewardsStatusFilter !== 'all') {
+      filtered = filtered.filter(reward => reward.status === rewardsStatusFilter);
+    }
+    
+    // Apply sorting
+    return filtered.sort((a, b) => {
+      let aValue: number | string | Date;
+      let bValue: number | string | Date;
+      
+      switch (rewardsSortBy) {
+        case 'availableRewards':
+          aValue = a.availableRewards;
+          bValue = b.availableRewards;
+          break;
+        case 'totalEarned':
+          aValue = a.totalEarned;
+          bValue = b.totalEarned;
+          break;
+        case 'apy':
+          aValue = a.apy;
+          bValue = b.apy;
+          break;
+        case 'asset':
+          aValue = a.asset;
+          bValue = b.asset;
+          break;
+        case 'usdValue':
+          aValue = a.usdValue;
+          bValue = b.usdValue;
+          break;
+        default:
+          aValue = a.availableRewards;
+          bValue = b.availableRewards;
+      }
+      
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return rewardsSortOrder === 'asc' 
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      }
+      
+      return rewardsSortOrder === 'asc' 
+        ? (aValue as number) - (bValue as number)
+        : (bValue as number) - (aValue as number);
+    });
+  }, [rewardsSortBy, rewardsSortOrder, rewardsStatusFilter]);
+
   return (
     <div className="space-y-8 animate-fade-in">
       {/* ---- Header ---- */}
@@ -180,19 +340,84 @@ const StakingPage = () => {
 
       {/* ---- Wallet Snapshot ---- */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-        {[
-          { label: 'Available Balance', value: '68,750,904.45 USDT', icon: DollarSign },
-          { label: 'Total Staked', value: '300,025.45 ONT', icon: Lock },
-          { label: 'Rewards to Claim', value: '12.15 ONT', icon: Gift },
-        ].map(item => (
-          <div key={item.label} className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <item.icon className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
-              <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{item.label}</span>
-            </div>
-            <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{item.value}</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-6">
+          <div className="flex items-center gap-3 mb-2">
+            <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
+            <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Available Balance</span>
           </div>
-        ))}
+          <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">68,750,904.45 USDT</p>
+        </div>
+        
+        <div ref={stakedDropdownRef} className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-6 relative">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-3">
+              <Lock className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
+              <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Total Staked</span>
+            </div>
+            <button
+              onClick={() => setShowStakedDropdown(!showStakedDropdown)}
+              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+              title="View breakdown by asset"
+            >
+              <ChevronDown className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform ${showStakedDropdown ? 'rotate-180' : ''}`} />
+            </button>
+          </div>
+          <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
+            {userStakes.reduce((total, stake) => total + stake.amount, 0).toLocaleString()} Tokens
+          </p>
+          
+          {/* Dropdown content */}
+          {showStakedDropdown && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-10 overflow-hidden">
+              <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+                <h4 className="text-sm font-medium text-gray-900 dark:text-white">Staked by Asset</h4>
+              </div>
+              <div className="max-h-64 overflow-y-auto">
+                {stakedByAsset.length > 0 ? (
+                  stakedByAsset.map(({ asset, amount, logo, color }) => (
+                    <div key={asset} className="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${color} flex items-center justify-center`}>
+                          {logo ? (
+                            <img src={logo} alt={asset} className="w-5 h-5" />
+                          ) : (
+                            <span className="text-white text-xs font-bold">{asset.charAt(0)}</span>
+                          )}
+                        </div>
+                        <span className="text-sm font-medium text-gray-900 dark:text-white">{asset}</span>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                          {amount.toLocaleString()}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {((amount / userStakes.reduce((total, stake) => total + stake.amount, 0)) * 100).toFixed(1)}%
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
+                    No staked assets found
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+        
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-6">
+          <div className="flex items-center gap-3 mb-2">
+            <Gift className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
+            <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Rewards to Claim</span>
+          </div>
+          <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
+            ${userRewards.filter(r => r.status === 'claimable').reduce((total, reward) => total + reward.usdValue, 0).toLocaleString()}
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            {userRewards.filter(r => r.status === 'claimable').length} tokens available
+          </p>
+        </div>
       </section>
 
       {/* ---- Tabs ---- */}
@@ -257,7 +482,29 @@ const StakingPage = () => {
           onStatusFilterChange={setStakesStatusFilter}
         />
       )}
-      {tab === 'rewards' && <RewardsCenter onClaimClick={() => setShowClaimModal(true)} />}
+      {tab === 'rewards' && (
+        <RewardsTable 
+          rewards={sortedRewards}
+          selectedRewards={selectedRewards}
+          onRewardSelect={setSelectedRewards}
+          onClaimClick={(rewards) => {
+            setSelectedRewards(rewards);
+            setShowClaimModal(true);
+          }}
+          sortBy={rewardsSortBy}
+          sortOrder={rewardsSortOrder}
+          statusFilter={rewardsStatusFilter}
+          onSortChange={(field) => {
+            if (field === rewardsSortBy) {
+              setRewardsSortOrder(rewardsSortOrder === 'asc' ? 'desc' : 'asc');
+            } else {
+              setRewardsSortBy(field);
+              setRewardsSortOrder('desc');
+            }
+          }}
+          onStatusFilterChange={setRewardsStatusFilter}
+        />
+      )}
 
       {/* ---- Modals ---- */}
       {showStakingModal && (
@@ -265,7 +512,13 @@ const StakingPage = () => {
       )}
       
       {showClaimModal && (
-        <ClaimRewardsModal onClose={() => setShowClaimModal(false)} />
+        <ClaimRewardsModal 
+          onClose={() => {
+            setShowClaimModal(false);
+            setSelectedRewards([]);
+          }}
+          selectedRewards={selectedRewards}
+        />
       )}
       
       {showUnstakeModal && selectedStake && (
@@ -600,54 +853,328 @@ const MyStakesTable = ({
 );
 
 /* ---------------------------------- */
-interface RewardsCenterProps {
-  onClaimClick: () => void;
+interface RewardsTableProps {
+  rewards: typeof userRewards;
+  selectedRewards: string[];
+  onRewardSelect: (rewards: string[]) => void;
+  onClaimClick: (rewards: string[]) => void;
+  sortBy: string;
+  sortOrder: 'asc' | 'desc';
+  statusFilter: string;
+  onSortChange: (field: string) => void;
+  onStatusFilterChange: (status: string) => void;
 }
 
-const RewardsCenter = ({ onClaimClick }: RewardsCenterProps) => {
-  const [countdown, setCountdown] = React.useState({ d: 3, h: 4, m: 15 });
+const RewardsTable = ({ 
+  rewards, 
+  selectedRewards,
+  onRewardSelect,
+  onClaimClick, 
+  sortBy, 
+  sortOrder, 
+  statusFilter, 
+  onSortChange, 
+  onStatusFilterChange 
+}: RewardsTableProps) => {
+  const claimableRewards = rewards.filter(r => r.status === 'claimable');
+  const totalClaimableValue = claimableRewards.reduce((total, reward) => total + reward.usdValue, 0);
+  
+  const handleSelectAll = () => {
+    if (selectedRewards.length === claimableRewards.length) {
+      onRewardSelect([]);
+    } else {
+      onRewardSelect(claimableRewards.map(r => r.asset));
+    }
+  };
 
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdown(prev => {
-        if (prev.m > 0) return { ...prev, m: prev.m - 1 };
-        if (prev.h > 0) return { d: prev.d, h: prev.h - 1, m: 59 };
-        if (prev.d > 0) return { d: prev.d - 1, h: 23, m: 59 };
-        return { d: 0, h: 0, m: 0 };
-      });
-    }, 60_000);
-    return () => clearInterval(timer);
-  }, []);
+  const handleSelectReward = (asset: string) => {
+    if (selectedRewards.includes(asset)) {
+      onRewardSelect(selectedRewards.filter(r => r !== asset));
+    } else {
+      onRewardSelect([...selectedRewards, asset]);
+    }
+  };
+
+  const handleClaimSelected = () => {
+    if (selectedRewards.length > 0) {
+      onClaimClick(selectedRewards);
+    }
+  };
 
   return (
-    <section className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-6 space-y-4">
-        <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-          <Gift className="text-green-500 w-5 h-5" /> Rewards to Claim
-        </h3>
-        <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">12.15 ONT</p>
-        <p className="text-xs sm:text-sm text-gray-500">
-          Next claim in: <span className="font-mono">{countdown.d}D {countdown.h}H {countdown.m}Min</span>
-        </p>
-        <button 
-          onClick={onClaimClick}
-          className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-2 rounded-lg font-semibold hover:from-green-600 hover:to-emerald-700 text-sm sm:text-base"
-        >
-          Claim Now
-        </button>
+    <div className="space-y-6">
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-6">
+          <div className="flex items-center gap-3 mb-2">
+            <Gift className="w-5 h-5 text-green-500" />
+            <span className="text-sm text-gray-500 dark:text-gray-400">Total Claimable</span>
+          </div>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+            ${totalClaimableValue.toLocaleString()}
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            {claimableRewards.length} tokens available
+          </p>
+        </div>
+        
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-6">
+          <div className="flex items-center gap-3 mb-2">
+            <TrendingUp className="w-5 h-5 text-blue-500" />
+            <span className="text-sm text-gray-500 dark:text-gray-400">Total Earned</span>
+          </div>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+            ${rewards.reduce((total, reward) => total + (reward.totalEarned * (reward.usdValue / reward.availableRewards || 0)), 0).toLocaleString()}
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            All time rewards
+          </p>
+        </div>
+        
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-6">
+          <div className="flex items-center gap-3 mb-2">
+            <Settings className="w-5 h-5 text-purple-500" />
+            <span className="text-sm text-gray-500 dark:text-gray-400">Auto-Claim</span>
+          </div>
+          <label className="inline-flex items-center cursor-pointer">
+            <input type="checkbox" className="sr-only peer" />
+            <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+            <span className="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300">Enable</span>
+          </label>
+        </div>
       </div>
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-6 space-y-4">
-        <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-          <Settings className="text-blue-500 w-5 h-5" /> Auto-Claim
-        </h3>
-        <p className="text-xs sm:text-sm text-gray-500">Enable automatic reward compounding to maximize APY.</p>
-        <label className="inline-flex items-center cursor-pointer">
-          <input type="checkbox" className="sr-only peer" />
-          <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-          <span className="ml-3 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">Activate Auto-Claim</span>
-        </label>
+
+      {/* Controls */}
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
+        <div className="flex flex-wrap gap-2">
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300 self-center">Filter:</span>
+          <select
+            value={statusFilter}
+            onChange={(e) => onStatusFilterChange(e.target.value)}
+            className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="all">All Status</option>
+            <option value="claimable">Claimable</option>
+            <option value="pending">Pending</option>
+          </select>
+        </div>
+        
+        <div className="flex flex-wrap gap-2">
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300 self-center">Sort by:</span>
+          {[
+            { key: 'availableRewards', label: 'Available' },
+            { key: 'totalEarned', label: 'Total Earned' },
+            { key: 'apy', label: 'APY' },
+            { key: 'asset', label: 'Asset' },
+            { key: 'usdValue', label: 'USD Value' }
+          ].map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => onSortChange(key)}
+              className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                sortBy === key
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+              }`}
+            >
+              {label}
+              {sortBy === key && (
+                sortOrder === 'asc' ? <SortAsc className="w-3 h-3" /> : <SortDesc className="w-3 h-3" />
+              )}
+            </button>
+          ))}
+        </div>
       </div>
-    </section>
+
+      {/* Bulk Actions */}
+      {claimableRewards.length > 0 && (
+        <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              checked={selectedRewards.length === claimableRewards.length && claimableRewards.length > 0}
+              onChange={handleSelectAll}
+              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <span className="text-sm text-gray-700 dark:text-gray-300">
+              {selectedRewards.length > 0 
+                ? `${selectedRewards.length} selected` 
+                : 'Select all claimable rewards'
+              }
+            </span>
+          </div>
+          
+          {selectedRewards.length > 0 && (
+            <button
+              onClick={handleClaimSelected}
+              className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-green-600 hover:to-emerald-700 transition-all"
+            >
+              <Gift className="w-4 h-4" />
+              Claim Selected (${rewards.filter(r => selectedRewards.includes(r.asset)).reduce((total, reward) => total + reward.usdValue, 0).toLocaleString()})
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Results Count */}
+      <div className="text-sm text-gray-600 dark:text-gray-400">
+        Showing {rewards.length} of {userRewards.length} rewards
+      </div>
+
+      {/* Rewards Table */}
+      <section className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+        {rewards.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500 dark:text-gray-400">No rewards match your current filters.</p>
+          </div>
+        ) : (
+          <>
+            {/* Mobile view */}
+            <div className="block lg:hidden">
+              {rewards.map(reward => (
+                <div key={reward.asset} className="p-4 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex items-center gap-3">
+                      {reward.status === 'claimable' && (
+                        <input
+                          type="checkbox"
+                          checked={selectedRewards.includes(reward.asset)}
+                          onChange={() => handleSelectReward(reward.asset)}
+                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                      )}
+                      <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${reward.color} flex items-center justify-center`}>
+                        <span className="text-white text-xs font-bold">{reward.asset.slice(0, 2)}</span>
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-gray-900 dark:text-white">{reward.asset}</h3>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          reward.status === 'claimable' 
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                            : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+                        }`}>
+                          {reward.status === 'claimable' ? 'Claimable' : 'Pending'}
+                        </span>
+                      </div>
+                    </div>
+                    {reward.status === 'claimable' && (
+                      <button 
+                        onClick={() => onClaimClick([reward.asset])}
+                        className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-200 font-semibold text-sm"
+                      >
+                        Claim
+                      </button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-500">Available</span>
+                      <p className="font-medium">{reward.availableRewards.toLocaleString()} {reward.asset}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">USD Value</span>
+                      <p className="font-medium text-green-600 dark:text-green-400">${reward.usdValue.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Total Earned</span>
+                      <p className="font-medium">{reward.totalEarned.toLocaleString()} {reward.asset}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">APY</span>
+                      <p className="font-medium">{reward.apy}%</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop view */}
+            <div className="hidden lg:block">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-900">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <input
+                        type="checkbox"
+                        checked={selectedRewards.length === claimableRewards.length && claimableRewards.length > 0}
+                        onChange={handleSelectAll}
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Available Rewards</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">USD Value</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Earned</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">APY</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {rewards.map(reward => (
+                    <tr key={reward.asset} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {reward.status === 'claimable' && (
+                          <input
+                            type="checkbox"
+                            checked={selectedRewards.includes(reward.asset)}
+                            onChange={() => handleSelectReward(reward.asset)}
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                          />
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${reward.color} flex items-center justify-center`}>
+                            <span className="text-white text-xs font-bold">{reward.asset.slice(0, 2)}</span>
+                          </div>
+                          <span className="text-sm font-medium text-gray-900 dark:text-white">{reward.asset}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                        {reward.availableRewards.toLocaleString()} {reward.asset}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 dark:text-green-400 font-medium">
+                        ${reward.usdValue.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                        {reward.totalEarned.toLocaleString()} {reward.asset}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                        {reward.apy}%
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          reward.status === 'claimable' 
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                            : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+                        }`}>
+                          {reward.status === 'claimable' ? 'Claimable' : 'Pending'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {reward.status === 'claimable' ? (
+                          <button 
+                            onClick={() => onClaimClick([reward.asset])}
+                            className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-200 font-semibold"
+                          >
+                            <Gift className="inline w-4 h-4 mr-1" /> Claim
+                          </button>
+                        ) : (
+                          <span className="text-gray-400 text-sm">
+                            <Clock className="inline w-4 h-4 mr-1" /> Pending
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+      </section>
+    </div>
   );
 };
 
