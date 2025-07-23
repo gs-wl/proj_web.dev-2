@@ -179,3 +179,15 @@ export interface PaginatedResponse<T> {
   hasNext: boolean
   hasPrev: boolean
 }
+
+// Web3 specific types
+export interface StakeInfo {
+  id: bigint
+  user: string
+  token: string
+  amount: bigint
+  rewards: bigint
+  startTime: bigint
+  endTime: bigint
+  claimed: boolean
+}

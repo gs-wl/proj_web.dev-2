@@ -1,12 +1,18 @@
+'use client';
+
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
   Lock, Unlock, ArrowRight, Clock, Gift, PlusCircle, Repeat,
   ChevronDown, TrendingUp, DollarSign, Calendar, Settings, Bell, User,
   Filter, SortAsc, SortDesc
 } from 'lucide-react';
-import StakingActivationModal from './staking-activation-modal';
-import ClaimRewardsModal from './claim-rewards-modal';
-import UnstakeModal from './unstake-modal';
+import { useAccount } from 'wagmi';
+import { Web3StakingModal } from './web3-staking-modal';
+import { Web3ClaimModal } from './web3-claim-modal';
+import { Web3UnstakeModal } from './web3-unstake-modal';
+import { WalletStatus } from './wallet-status';
+import { useStaking } from '@/hooks/useStaking';
+import { SUPPORTED_TOKENS } from '@/lib/web3-config';
 
 const stakingOffers = [
   { asset: 'ADA', apy: 8.65, min: 100, logo: '/ada.svg', color: 'from-blue-500 to-blue-600', status: 'active' },
@@ -118,11 +124,14 @@ const userRewards = [
 ];
 
 const StakingPage = () => {
+  const { isConnected } = useAccount();
+  const { userStakes } = useStaking();
   const [tab, setTab] = useState('offerings'); // offerings | my-stakes | rewards
   const [showStakingModal, setShowStakingModal] = useState(false);
   const [showClaimModal, setShowClaimModal] = useState(false);
   const [showUnstakeModal, setShowUnstakeModal] = useState(false);
-  const [selectedStake, setSelectedStake] = useState<typeof userStakes[0] | null>(null);
+  const [selectedAsset, setSelectedAsset] = useState('ADA');
+  const [selectedStakeId, setSelectedStakeId] = useState<bigint | undefined>(undefined);
   
   // Sorting and filtering states
   const [offeringSortBy, setOfferingSortBy] = useState('apy'); // apy | asset | min
@@ -160,10 +169,17 @@ const StakingPage = () => {
 
   // Calculate staked amounts by asset
   const stakedByAsset = useMemo(() => {
+    if (!userStakes) return [];
+    
     const assetMap = new Map<string, number>();
     userStakes.forEach(stake => {
-      const currentAmount = assetMap.get(stake.asset) || 0;
-      assetMap.set(stake.asset, currentAmount + stake.amount);
+      // Find the token symbol from the contract address
+      const token = SUPPORTED_TOKENS.find(t => 
+        Object.values(t.addresses).includes(stake.token as any)
+      );
+      const asset = token?.symbol || 'Unknown';
+      const currentAmount = assetMap.get(asset) || 0;
+      assetMap.set(asset, currentAmount + Number(stake.amount) / 1e18); // Convert from wei
     });
     return Array.from(assetMap.entries()).map(([asset, amount]) => ({
       asset,
@@ -219,11 +235,17 @@ const StakingPage = () => {
 
   // Memoized sorted and filtered stakes
   const sortedStakes = useMemo(() => {
+    if (!userStakes) return [];
+    
     let filtered = userStakes;
     
     // Apply status filter
     if (stakesStatusFilter !== 'all') {
-      filtered = filtered.filter(stake => stake.status === stakesStatusFilter);
+      filtered = filtered.filter(stake => {
+        const isMatured = stake.endTime <= BigInt(Math.floor(Date.now() / 1000));
+        const status = isMatured ? 'completed' : 'active';
+        return status === stakesStatusFilter;
+      });
     }
     
     // Apply sorting
@@ -233,24 +255,30 @@ const StakingPage = () => {
       
       switch (stakesSortBy) {
         case 'amount':
-          aValue = a.amount;
-          bValue = b.amount;
+          aValue = Number(a.amount);
+          bValue = Number(b.amount);
           break;
         case 'earned':
-          aValue = a.earned;
-          bValue = b.earned;
+          aValue = Number(a.rewards);
+          bValue = Number(b.rewards);
           break;
         case 'endDate':
-          aValue = new Date(a.endDate);
-          bValue = new Date(b.endDate);
+          aValue = new Date(Number(a.endTime) * 1000);
+          bValue = new Date(Number(b.endTime) * 1000);
           break;
         case 'asset':
-          aValue = a.asset;
-          bValue = b.asset;
+          const tokenA = SUPPORTED_TOKENS.find(t => 
+            Object.values(t.addresses).includes(a.token as any)
+          );
+          const tokenB = SUPPORTED_TOKENS.find(t => 
+            Object.values(t.addresses).includes(b.token as any)
+          );
+          aValue = tokenA?.symbol || 'Unknown';
+          bValue = tokenB?.symbol || 'Unknown';
           break;
         default:
-          aValue = a.amount;
-          bValue = b.amount;
+          aValue = Number(a.amount);
+          bValue = Number(b.amount);
       }
       
       if (typeof aValue === 'string' && typeof bValue === 'string') {
@@ -269,7 +297,7 @@ const StakingPage = () => {
         ? (aValue as number) - (bValue as number)
         : (bValue as number) - (aValue as number);
     });
-  }, [stakesSortBy, stakesSortOrder, stakesStatusFilter]);
+  }, [userStakes, stakesSortBy, stakesSortOrder, stakesStatusFilter]);
 
   // Memoized sorted and filtered rewards
   const sortedRewards = useMemo(() => {
@@ -323,102 +351,72 @@ const StakingPage = () => {
     });
   }, [rewardsSortBy, rewardsSortOrder, rewardsStatusFilter]);
 
+  // Calculate total token balance for header display
+  const totalTokenBalance = useMemo(() => {
+    if (!userStakes) return 0;
+    return userStakes.reduce((total, stake) => {
+      return total + Number(stake.amount) / 1e18; // Convert from wei
+    }, 0);
+  }, [userStakes]);
+
   return (
     <div className="space-y-8 animate-fade-in">
       {/* ---- Header ---- */}
       <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Staking</h1>
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={() => setShowStakingModal(true)}
-            className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-green-600 hover:to-emerald-700 transition-all"
-          >
-            <PlusCircle className="w-4 h-4" /> Add Stake
-          </button>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          {isConnected && (
+            <>
+              {/* Token Balance Card */}
+              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 shadow-sm min-w-[160px]">
+                <div className="flex items-center gap-2">
+                  <DollarSign className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <div className="flex flex-col">
+                    <span className="text-xs text-gray-500 dark:text-gray-400 leading-tight">Token Balance</span>
+                    <span className="text-sm font-semibold text-gray-900 dark:text-white leading-tight">
+                      {totalTokenBalance.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Add Stake Button */}
+              <button 
+                onClick={() => setShowStakingModal(true)}
+                className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-green-600 hover:to-emerald-700 transition-all min-h-[40px]"
+              >
+                <PlusCircle className="w-4 h-4" /> Add Stake
+              </button>
+            </>
+          )}
         </div>
       </header>
 
-      {/* ---- Wallet Snapshot ---- */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
-            <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Available Balance</span>
-          </div>
-          <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">68,750,904.45 USDT</p>
-        </div>
-        
-        <div ref={stakedDropdownRef} className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-6 relative">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-3">
-              <Lock className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
-              <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Total Staked</span>
-            </div>
-            <button
-              onClick={() => setShowStakedDropdown(!showStakedDropdown)}
-              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
-              title="View breakdown by asset"
-            >
-              <ChevronDown className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform ${showStakedDropdown ? 'rotate-180' : ''}`} />
-            </button>
-          </div>
-          <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
-            {userStakes.reduce((total, stake) => total + stake.amount, 0).toLocaleString()} Tokens
-          </p>
-          
-          {/* Dropdown content */}
-          {showStakedDropdown && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-10 overflow-hidden">
-              <div className="p-3 border-b border-gray-200 dark:border-gray-700">
-                <h4 className="text-sm font-medium text-gray-900 dark:text-white">Staked by Asset</h4>
+      {/* ---- Wallet Status ---- */}
+      <WalletStatus />
+
+      {/* ---- Connection Prompt (when not connected) ---- */}
+      {!isConnected && (
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                <Lock className="w-6 h-6 text-white" />
               </div>
-              <div className="max-h-64 overflow-y-auto">
-                {stakedByAsset.length > 0 ? (
-                  stakedByAsset.map(({ asset, amount, logo, color }) => (
-                    <div key={asset} className="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${color} flex items-center justify-center`}>
-                          {logo ? (
-                            <img src={logo} alt={asset} className="w-5 h-5" />
-                          ) : (
-                            <span className="text-white text-xs font-bold">{asset.charAt(0)}</span>
-                          )}
-                        </div>
-                        <span className="text-sm font-medium text-gray-900 dark:text-white">{asset}</span>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                          {amount.toLocaleString()}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {((amount / userStakes.reduce((total, stake) => total + stake.amount, 0)) * 100).toFixed(1)}%
-                        </p>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
-                    No staked assets found
-                  </div>
-                )}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Connect Your Wallet</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Connect your wallet using the button in the top-right corner to start staking and earning rewards.
+                </p>
               </div>
             </div>
-          )}
-        </div>
-        
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <Gift className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
-            <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Rewards to Claim</span>
+            <div className="hidden sm:flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+              <span>Look for the wallet button</span>
+              <ArrowRight className="w-4 h-4" />
+            </div>
           </div>
-          <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
-            ${userRewards.filter(r => r.status === 'claimable').reduce((total, reward) => total + reward.usdValue, 0).toLocaleString()}
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            {userRewards.filter(r => r.status === 'claimable').length} tokens available
-          </p>
         </div>
-      </section>
+      )}
 
       {/* ---- Tabs ---- */}
       <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
@@ -446,7 +444,10 @@ const StakingPage = () => {
       {tab === 'offerings' && (
         <OfferingGrid 
           offerings={sortedOfferings}
-          onStakeClick={() => setShowStakingModal(true)}
+          onStakeClick={(asset) => {
+            setSelectedAsset(asset);
+            setShowStakingModal(true);
+          }}
           sortBy={offeringSortBy}
           sortOrder={offeringSortOrder}
           statusFilter={offeringStatusFilter}
@@ -463,9 +464,9 @@ const StakingPage = () => {
       )}
       {tab === 'my-stakes' && (
         <MyStakesTable 
-          stakes={sortedStakes}
-          onUnstakeClick={(stake) => {
-            setSelectedStake(stake);
+          stakes={userStakes || []}
+          onUnstakeClick={(stakeId) => {
+            setSelectedStakeId(stakeId);
             setShowUnstakeModal(true);
           }}
           sortBy={stakesSortBy}
@@ -483,12 +484,11 @@ const StakingPage = () => {
         />
       )}
       {tab === 'rewards' && (
-        <RewardsTable 
+        <RewardsTable
           rewards={sortedRewards}
           selectedRewards={selectedRewards}
           onRewardSelect={setSelectedRewards}
           onClaimClick={(rewards) => {
-            setSelectedRewards(rewards);
             setShowClaimModal(true);
           }}
           sortBy={rewardsSortBy}
@@ -507,29 +507,25 @@ const StakingPage = () => {
       )}
 
       {/* ---- Modals ---- */}
-      {showStakingModal && (
-        <StakingActivationModal onClose={() => setShowStakingModal(false)} />
-      )}
+      <Web3StakingModal
+        isOpen={showStakingModal}
+        onClose={() => setShowStakingModal(false)}
+        selectedAsset={selectedAsset}
+      />
       
-      {showClaimModal && (
-        <ClaimRewardsModal 
-          onClose={() => {
-            setShowClaimModal(false);
-            setSelectedRewards([]);
-          }}
-          selectedRewards={selectedRewards}
-        />
-      )}
+      <Web3ClaimModal
+        isOpen={showClaimModal}
+        onClose={() => setShowClaimModal(false)}
+      />
       
-      {showUnstakeModal && selectedStake && (
-        <UnstakeModal 
-          onClose={() => {
-            setShowUnstakeModal(false);
-            setSelectedStake(null);
-          }}
-          stakeData={selectedStake}
-        />
-      )}
+      <Web3UnstakeModal
+        isOpen={showUnstakeModal}
+        onClose={() => {
+          setShowUnstakeModal(false);
+          setSelectedStakeId(undefined);
+        }}
+        selectedStakeId={selectedStakeId}
+      />
     </div>
   );
 };
@@ -537,7 +533,7 @@ const StakingPage = () => {
 /* ---------------------------------- */
 interface OfferingGridProps {
   offerings: typeof stakingOffers;
-  onStakeClick: () => void;
+  onStakeClick: (asset: string) => void;
   sortBy: string;
   sortOrder: 'asc' | 'desc';
   statusFilter: string;
@@ -652,7 +648,7 @@ const OfferingGrid = ({
           <p className="font-semibold text-sm sm:text-base">{o.min} {o.asset}</p>
         </div>
             <button 
-              onClick={onStakeClick}
+              onClick={() => onStakeClick(o.asset)}
               className={`w-full py-2 rounded-lg font-semibold transition-all text-sm sm:text-base ${
                 o.status === 'active'
                   ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700'
@@ -671,8 +667,8 @@ const OfferingGrid = ({
 
 /* ---------------------------------- */
 interface MyStakesTableProps {
-  stakes: typeof userStakes;
-  onUnstakeClick: (stake: typeof userStakes[0]) => void;
+  stakes: any[];
+  onUnstakeClick: (stakeId: bigint) => void;
   sortBy: string;
   sortOrder: 'asc' | 'desc';
   statusFilter: string;

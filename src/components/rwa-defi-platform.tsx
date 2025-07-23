@@ -1,4 +1,7 @@
-import React, { useState, useMemo } from 'react';
+'use client';
+
+import React, { useState, useMemo, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Search, TrendingUp, Filter, Star, Zap, Wind, Sun, Battery, Leaf, Mountain,
   DollarSign, Users, Calendar, ArrowRight, PlusCircle, BarChart3, Globe,
@@ -8,6 +11,7 @@ import {
   Database, GitBranch, Timer, Repeat, Network
 } from 'lucide-react';
 import { StakingPage } from './index';
+import { WalletConnectButton, CompactWalletButton } from './wallet-connect-button';
 
 /* ---------- Color themes ---------- */
 const themes = [
@@ -17,12 +21,6 @@ const themes = [
 ];
 
 /* ---------- Dummy data kept identical ---------- */
-const chains = [
-  { id: 'ethereum', name: 'Ethereum', symbol: 'ETH' },
-  { id: 'polygon', name: 'Polygon', symbol: 'MATIC' },
-  { id: 'arbitrum', name: 'Arbitrum', symbol: 'ARB' },
-  { id: 'base', name: 'Base', symbol: 'BASE' }
-];
 
 const assetTypes = [
   { id: 'all', label: 'All RWAs', icon: Globe },
@@ -200,12 +198,30 @@ const TokenCard = ({ token }: TokenCardProps) => (
 
 /* ---------- Main platform ---------- */
 const Web3RWAPlatform = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState('market-overview');
+  
+  // Initialize activeTab from URL on component mount
+  useEffect(() => {
+    const tabFromUrl = searchParams.get('tab');
+    if (tabFromUrl) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [searchParams]);
+  
+  // Update URL when activeTab changes
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('tab', tab);
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
   const [selectedAssetType, setSelectedAssetType] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userToggledSidebar, setUserToggledSidebar] = useState(false);
-  const [selectedChain, setSelectedChain] = useState('ethereum');
+
   const [theme, setTheme] = useState('light');
   const [sortBy, setSortBy] = useState('apy');
 
@@ -238,11 +254,10 @@ const Web3RWAPlatform = () => {
   const filteredAssets = useMemo(() => {
     return tokenizedAssets.filter(token => {
       const matchesType = selectedAssetType === 'all' || normalizeType(token.type) === selectedAssetType;
-      const matchesChain = token.chain === selectedChain;
       const matchesSearch = token.symbol.toLowerCase().includes(searchQuery.toLowerCase()) || token.name.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesType && matchesChain && matchesSearch;
+      return matchesType && matchesSearch;
     });
-  }, [selectedAssetType, selectedChain, searchQuery]);
+  }, [selectedAssetType, searchQuery]);
 
   const sortedAssets = useMemo(() => {
     const arr = [...filteredAssets];
@@ -253,7 +268,7 @@ const Web3RWAPlatform = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-200">
-      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} setUserToggledSidebar={setUserToggledSidebar} activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} setUserToggledSidebar={setUserToggledSidebar} activeTab={activeTab} setActiveTab={handleTabChange} />
       {sidebarOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={() => { setSidebarOpen(false); setUserToggledSidebar(true); }} />}
       <div className={`flex flex-col transition-all duration-300 ${sidebarOpen ? 'lg:ml-80' : 'lg:ml-0'}`}>
         <header className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 px-4 lg:px-8 py-4">
@@ -265,47 +280,37 @@ const Web3RWAPlatform = () => {
                 {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
               
-              {/* Chain selector - always visible but smaller on mobile */}
-              <select value={selectedChain} onChange={e => setSelectedChain(e.target.value)} className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium">
-                {chains.map(c => <option key={c.id} value={c.id}>{c.symbol}</option>)}
-              </select>
-              
-              {/* Network status - hidden on mobile */}
+              {/* Network info - hidden on mobile */}
               <div className="hidden lg:block h-6 w-px bg-gray-300 dark:bg-gray-800"></div>
               <div className="hidden lg:flex items-center gap-4 text-sm">
-                <div className="flex items-center gap-2"><div className="w-2 h-2 bg-green-500 rounded-full"></div><span>Network Active</span></div>
                 <div>Gas: 23 gwei</div><div>ETH: $2,847</div>
               </div>
             </div>
 
             {/* Right side */}
             <div className="flex items-center gap-1 sm:gap-2 lg:gap-4">
-              {/* Notifications - always visible */}
-              <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg relative" aria-label="Notifications">
-                <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
-                <div className="absolute -top-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full"></div>
-              </button>
-              
-              {/* Wallet - responsive design */}
-              <div className="flex items-center gap-1 sm:gap-3 bg-gray-100 dark:bg-gray-800 rounded-lg px-2 sm:px-3 py-2">
-                <Wallet className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="font-semibold text-xs sm:text-sm">
-                  <span className="hidden sm:inline">0x1234...5678</span>
-                  <span className="sm:hidden">0x12...78</span>
-                </span>
-                <button className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-200">
-                  <Copy className="w-3 h-3 sm:w-4 sm:h-4" />
-                </button>
+              {/* Wallet Connect - responsive design */}
+              <div className="hidden sm:block">
+                <WalletConnectButton />
+              </div>
+              <div className="sm:hidden">
+                <CompactWalletButton />
               </div>
               
               {/* List Asset button - hidden on small mobile, text hidden on medium mobile */}
-              <button className="hidden sm:flex bg-gradient-to-r from-green-500 to-emerald-600 text-white px-2 sm:px-4 py-2 rounded-lg font-semibold hover:from-green-600 hover:to-emerald-700 transition-all duration-200 items-center gap-2">
+              <button className="hidden sm:flex bg-gradient-to-r from-green-500 to-emerald-600 text-white px-2 sm:px-4 py-2 rounded-lg font-semibold hover:from-green-600 hover:to-emerald-700 transition-all duration-200 items-center gap-2 h-10">
                 <PlusCircle className="w-4 h-4" />
                 <span className="hidden md:inline">List Asset</span>
               </button>
               
+              {/* Notifications - always visible */}
+              <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg relative h-10 w-10 flex items-center justify-center" aria-label="Notifications">
+                <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
+                <div className="absolute -top-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full"></div>
+              </button>
+              
               {/* Theme selector - compact on mobile */}
-              <select value={theme} onChange={e => setTheme(e.target.value)} className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-1 sm:px-2 py-2 text-xs sm:text-sm font-medium" aria-label="Theme selector">
+              <select value={theme} onChange={e => setTheme(e.target.value)} className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-1 sm:px-2 py-2 text-xs sm:text-sm font-medium h-10" aria-label="Theme selector">
                 {themes.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
               </select>
             </div>
