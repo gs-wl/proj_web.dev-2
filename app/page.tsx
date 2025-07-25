@@ -1,7 +1,7 @@
 'use client'
 
-import { Web3RWAPlatform } from '@/components'
+import { Homepage } from '@/components/homepage'
 
 export default function HomePage() {
-  return <Web3RWAPlatform />
+  return <Homepage />
 }

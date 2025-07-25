@@ -197,3 +197,51 @@ a {
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* Grid pattern for homepage */
+.bg-grid-pattern {
+  background-image: 
+    linear-gradient(rgba(34, 197, 94, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 197, 94, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Homepage specific styles */
+.homepage {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Enhanced button hover effects */
+.btn-primary {
+  @apply bg-green-600 hover:bg-green-700 text-white transition-all duration-200 hover:scale-105 hover:shadow-lg;
+}
+
+.btn-secondary {
+  @apply border-green-600 text-green-600 hover:bg-green-50 transition-all duration-200 hover:scale-105;
+}
+
+/* Card hover effects */
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+}
+
+/* Input focus styles for green theme */
+.input-green:focus {
+  @apply border-green-500 ring-2 ring-green-200;
+}
+
+/* Responsive design utilities */
+@media (max-width: 768px) {
+  .mobile-padding {
+    @apply px-4 py-8;
+  }
+  
+  .mobile-text {
+    @apply text-2xl;
+  }
+}
