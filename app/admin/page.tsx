@@ -175,20 +175,23 @@ function AdminDashboard() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                <Shield className="h-8 w-8 text-green-600" />
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                <Shield className="h-6 w-6 lg:h-8 lg:w-8 text-green-600" />
                 Admin Dashboard
               </h1>
               <p className="text-gray-600 dark:text-gray-300 mt-2">Manage whitelist requests and platform access</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-mono">Connected as: {address}</p>
+              <p className="text-xs lg:text-sm text-gray-500 dark:text-gray-400 mt-1 font-mono break-all">
+                Connected as: {address}
+              </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <Button
                 onClick={() => router.push('/')}
                 variant="outline"
                 className="border-green-600 text-green-600 hover:bg-green-50"
+                size="sm"
               >
                 <Home className="h-4 w-4 mr-2" />
                 Go to Home
@@ -197,6 +200,7 @@ function AdminDashboard() {
                 onClick={loadRequests} 
                 disabled={loading}
                 className="bg-green-600 hover:bg-green-700"
+                size="sm"
               >
                 <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
                 Refresh
@@ -281,94 +285,166 @@ function AdminDashboard() {
                 <p className="text-gray-600 dark:text-gray-400">No whitelist requests found</p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-gray-200 dark:border-gray-700">
-                      <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Status</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Applicant</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Wallet Address</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Company</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Experience</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Submitted</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {requests.map((request) => (
-                      <tr key={request.id} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <td className="py-4 px-4">
-                          <div className="flex items-center gap-2">
-                            {getStatusIcon(request.status)}
-                            <span className={getStatusBadge(request.status)}>
-                              {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4">
-                          <div>
-                            <p className="font-medium text-gray-900 dark:text-white">{request.name}</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
-                              <Mail className="h-3 w-3" />
-                              {request.email}
-                            </p>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4">
-                          <div className="flex items-center gap-1">
-                            <Wallet className="h-3 w-3 text-gray-400" />
-                            <span className="font-mono text-sm text-gray-900 dark:text-gray-300">
-                              {request.walletAddress.slice(0, 6)}...{request.walletAddress.slice(-4)}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4">
+              <>
+                {/* Desktop Table View */}
+                <div className="hidden lg:block overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-200 dark:border-gray-700">
+                        <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Status</th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Applicant</th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Wallet Address</th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Company</th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Experience</th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Submitted</th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {requests.map((request) => (
+                        <tr key={request.id} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-2">
+                              {getStatusIcon(request.status)}
+                              <span className={getStatusBadge(request.status)}>
+                                {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4">
+                            <div>
+                              <p className="font-medium text-gray-900 dark:text-white">{request.name}</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                                <Mail className="h-3 w-3" />
+                                {request.email}
+                              </p>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-1">
+                              <Wallet className="h-3 w-3 text-gray-400" />
+                              <span className="font-mono text-sm text-gray-900 dark:text-gray-300">
+                                {request.walletAddress.slice(0, 6)}...{request.walletAddress.slice(-4)}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-1">
+                              <Building className="h-3 w-3 text-gray-400" />
+                              <span className="text-sm text-gray-900 dark:text-gray-300">{request.company}</span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4">
+                            <span className="text-sm capitalize text-gray-900 dark:text-gray-300">{request.defiExperience}</span>
+                          </td>
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-1">
+                              <Calendar className="h-3 w-3 text-gray-400" />
+                              <span className="text-sm text-gray-900 dark:text-gray-300">{formatDate(request.submittedAt)}</span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4">
+                            {request.status === 'pending' ? (
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleApprove(request.id, request.walletAddress)}
+                                  disabled={processingId === request.id}
+                                  className="bg-green-600 hover:bg-green-700 text-white"
+                                >
+                                  <CheckCircle className="h-3 w-3 mr-1" />
+                                  Approve
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleReject(request.id)}
+                                  disabled={processingId === request.id}
+                                  className="border-red-300 text-red-600 hover:bg-red-50"
+                                >
+                                  <XCircle className="h-3 w-3 mr-1" />
+                                  Reject
+                                </Button>
+                              </div>
+                            ) : (
+                              <span className="text-sm text-gray-500 dark:text-gray-400">-</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Card View */}
+                <div className="lg:hidden space-y-4">
+                  {requests.map((request) => (
+                    <div key={request.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          {getStatusIcon(request.status)}
+                          <span className={getStatusBadge(request.status)}>
+                            {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          {formatDate(request.submittedAt)}
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2 mb-4">
+                        <div>
+                          <p className="font-medium text-gray-900 dark:text-white">{request.name}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                            <Mail className="h-3 w-3" />
+                            {request.email}
+                          </p>
+                        </div>
+                        
+                        <div className="flex items-center gap-1">
+                          <Wallet className="h-3 w-3 text-gray-400" />
+                          <span className="font-mono text-xs text-gray-900 dark:text-gray-300">
+                            {request.walletAddress.slice(0, 8)}...{request.walletAddress.slice(-6)}
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
                           <div className="flex items-center gap-1">
                             <Building className="h-3 w-3 text-gray-400" />
                             <span className="text-sm text-gray-900 dark:text-gray-300">{request.company}</span>
                           </div>
-                        </td>
-                        <td className="py-4 px-4">
-                          <span className="text-sm capitalize text-gray-900 dark:text-gray-300">{request.defiExperience}</span>
-                        </td>
-                        <td className="py-4 px-4">
-                          <div className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3 text-gray-400" />
-                            <span className="text-sm text-gray-900 dark:text-gray-300">{formatDate(request.submittedAt)}</span>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4">
-                          {request.status === 'pending' ? (
-                            <div className="flex gap-2">
-                              <Button
-                                size="sm"
-                                onClick={() => handleApprove(request.id, request.walletAddress)}
-                                disabled={processingId === request.id}
-                                className="bg-green-600 hover:bg-green-700 text-white"
-                              >
-                                <CheckCircle className="h-3 w-3 mr-1" />
-                                Approve
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleReject(request.id)}
-                                disabled={processingId === request.id}
-                                className="border-red-300 text-red-600 hover:bg-red-50"
-                              >
-                                <XCircle className="h-3 w-3 mr-1" />
-                                Reject
-                              </Button>
-                            </div>
-                          ) : (
-                            <span className="text-sm text-gray-500 dark:text-gray-400">-</span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                          <span className="text-sm capitalize text-gray-600 dark:text-gray-400">{request.defiExperience}</span>
+                        </div>
+                      </div>
+                      
+                      {request.status === 'pending' && (
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <Button
+                            size="sm"
+                            onClick={() => handleApprove(request.id, request.walletAddress)}
+                            disabled={processingId === request.id}
+                            className="bg-green-600 hover:bg-green-700 text-white flex-1"
+                          >
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            Approve
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleReject(request.id)}
+                            disabled={processingId === request.id}
+                            className="border-red-300 text-red-600 hover:bg-red-50 flex-1"
+                          >
+                            <XCircle className="h-3 w-3 mr-1" />
+                            Reject
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </CardContent>
         </Card>

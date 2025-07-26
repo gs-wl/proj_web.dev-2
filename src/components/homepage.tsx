@@ -298,6 +298,28 @@ export function Homepage() {
             {/* Mobile Actions */}
             <div className="md:hidden flex items-center space-x-2">
               <ConnectButton />
+              {isConnected && !isLoading && (
+                <>
+                  {isWhitelisted ? (
+                    <Button 
+                      size="sm"
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                      onClick={() => router.push('/app')}
+                    >
+                      Launch App
+                    </Button>
+                  ) : (
+                    <Button 
+                      size="sm"
+                      variant="outline"
+                      className="border-green-600 text-green-600 hover:bg-green-50"
+                      onClick={() => router.push('/waitlist')}
+                    >
+                      Join Waitlist
+                    </Button>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>

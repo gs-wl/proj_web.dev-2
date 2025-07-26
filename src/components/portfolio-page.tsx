@@ -309,22 +309,23 @@ export function PortfolioPage() {
       <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => router.push('/app')}
                 className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700"
               >
-                <Home className="h-5 w-5" />
+                <Home className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Portfolio</h1>
-                <p className="text-sm text-gray-600 dark:text-gray-300">Manage your RWA investments</p>
+                <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">Portfolio</h1>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 hidden sm:block">Manage your RWA investments</p>
               </div>
             </div>
             
-            <div className="flex items-center space-x-3">
+            {/* Desktop Actions */}
+            <div className="hidden lg:flex items-center space-x-3">
               <Button variant="outline" size="sm" className="text-gray-600 border-gray-300 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:text-white">
                 <Download className="h-4 w-4 mr-2" />
                 Export
@@ -349,6 +350,28 @@ export function PortfolioPage() {
                 title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
               >
                 {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+              </Button>
+              <WalletConnectButton />
+            </div>
+            
+            {/* Mobile Actions */}
+            <div className="flex lg:hidden items-center space-x-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowBalances(!showBalances)}
+                className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700"
+              >
+                {showBalances ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleTheme}
+                className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700"
+                title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+              >
+                {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
               </Button>
               <WalletConnectButton />
             </div>
@@ -437,7 +460,8 @@ export function PortfolioPage() {
         {/* Navigation Tabs */}
         <div className="mb-8">
           <div className="border-b border-gray-200 dark:border-gray-700">
-            <nav className="-mb-px flex space-x-8">
+            {/* Desktop Tabs */}
+            <nav className="-mb-px hidden sm:flex space-x-8 overflow-x-auto">
               {[
                 { id: 'overview', label: 'Overview', icon: BarChart3 },
                 { id: 'assets', label: 'Assets', icon: Coins },
@@ -449,7 +473,7 @@ export function PortfolioPage() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                    className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${
                       activeTab === tab.id
                         ? 'border-blue-500 text-blue-600 dark:text-blue-400'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:border-gray-600'
@@ -461,6 +485,20 @@ export function PortfolioPage() {
                 )
               })}
             </nav>
+            
+            {/* Mobile Tabs */}
+            <div className="sm:hidden">
+              <select
+                value={activeTab}
+                onChange={(e) => setActiveTab(e.target.value)}
+                className="w-full py-3 px-4 border-0 border-b border-gray-200 dark:border-gray-700 bg-transparent text-gray-900 dark:text-white focus:ring-0 focus:border-blue-500 text-base font-medium"
+              >
+                <option value="overview">📊 Overview</option>
+                <option value="assets">🪙 Assets</option>
+                <option value="transactions">📈 Transactions</option>
+                <option value="analytics">📊 Analytics</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -578,58 +616,60 @@ export function PortfolioPage() {
           <div className="space-y-6">
             {/* Filters and Search */}
             <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-              <CardContent className="p-6">
-                <div className="flex flex-col lg:flex-row gap-4">
-                  <div className="flex-1 relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex flex-col gap-4">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
                     <input
                       type="text"
                       placeholder="Search assets..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                      className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm sm:text-base"
                     />
                   </div>
-                  <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  >
-                    <option value="all">All Categories</option>
-                    <option value="renewable">Renewable Energy</option>
-                    <option value="carbon">Carbon Credits</option>
-                    <option value="storage">Energy Storage</option>
-                  </select>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  >
-                    <option value="value">Sort by Value</option>
-                    <option value="change">Sort by Change</option>
-                    <option value="apy">Sort by APY</option>
-                    <option value="name">Sort by Name</option>
-                  </select>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <select
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                      className="px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm sm:text-base"
+                    >
+                      <option value="all">All Categories</option>
+                      <option value="renewable">Renewable Energy</option>
+                      <option value="carbon">Carbon Credits</option>
+                      <option value="storage">Energy Storage</option>
+                    </select>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm sm:text-base"
+                    >
+                      <option value="value">Sort by Value</option>
+                      <option value="change">Sort by Change</option>
+                      <option value="apy">Sort by APY</option>
+                      <option value="name">Sort by Name</option>
+                    </select>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Assets Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
               {filteredAssets.map((asset) => (
                 <Card key={asset.id} className="hover:shadow-lg transition-all duration-200 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
-                  <CardContent className="p-6">
+                  <CardContent className="p-4 sm:p-6">
                     <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center space-x-3">
-                        <div className={`w-12 h-12 rounded-full bg-gradient-to-r ${asset.color} flex items-center justify-center text-white font-bold shadow-sm`}>
+                      <div className="flex items-center space-x-2 sm:space-x-3">
+                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r ${asset.color} flex items-center justify-center text-white font-bold shadow-sm text-sm sm:text-base`}>
                           {asset.symbol.charAt(0)}
                         </div>
-                        <div>
-                          <h3 className="font-semibold text-lg text-gray-900 dark:text-white">{asset.symbol}</h3>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">{asset.name}</p>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-semibold text-base sm:text-lg text-gray-900 dark:text-white truncate">{asset.symbol}</h3>
+                          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">{asset.name}</p>
                         </div>
                       </div>
-                      <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                      <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex-shrink-0">
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </div>
@@ -687,14 +727,14 @@ export function PortfolioPage() {
                       </div>
                     </div>
 
-                    <div className="mt-6 flex space-x-2">
+                    <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row gap-2">
                       <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600">
                         <Target className="h-4 w-4 mr-1" />
-                        Stake
+                        <span className="text-xs sm:text-sm">Stake</span>
                       </Button>
                       <Button size="sm" variant="outline" className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
                         <Award className="h-4 w-4 mr-1" />
-                        Claim
+                        <span className="text-xs sm:text-sm">Claim</span>
                       </Button>
                     </div>
                   </CardContent>
@@ -707,53 +747,55 @@ export function PortfolioPage() {
         {activeTab === 'transactions' && (
           <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-gray-900 dark:text-white">Transaction History</CardTitle>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <CardTitle className="text-lg sm:text-xl text-gray-900 dark:text-white">Transaction History</CardTitle>
                 <div className="flex items-center space-x-2">
                   <Button variant="outline" size="sm" className="border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
-                    <Filter className="h-4 w-4 mr-2 text-gray-600 dark:text-gray-400" />
-                    Filter
+                    <Filter className="h-4 w-4 sm:mr-2 text-gray-600 dark:text-gray-400" />
+                    <span className="hidden sm:inline">Filter</span>
                   </Button>
                   <Button variant="outline" size="sm" className="border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
-                    <Download className="h-4 w-4 mr-2 text-gray-600 dark:text-gray-400" />
-                    Export
+                    <Download className="h-4 w-4 sm:mr-2 text-gray-600 dark:text-gray-400" />
+                    <span className="hidden sm:inline">Export</span>
                   </Button>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {mockTransactions.map((tx) => (
-                  <div key={tx.id} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center space-x-2">
+                  <div key={tx.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors gap-3 sm:gap-0">
+                    <div className="flex items-center space-x-3 sm:space-x-4 min-w-0 flex-1">
+                      <div className="flex items-center space-x-2 flex-shrink-0">
                         {getTransactionIcon(tx.type)}
                         {getStatusIcon(tx.status)}
                       </div>
-                      <div>
-                        <p className="font-medium capitalize text-gray-900 dark:text-white">{tx.type} {tx.asset}</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">{formatDate(tx.timestamp)}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium capitalize text-gray-900 dark:text-white text-sm sm:text-base truncate">{tx.type} {tx.asset}</p>
+                        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{formatDate(tx.timestamp)}</p>
                       </div>
                     </div>
                     
-                    <div className="text-right">
-                      <p className="font-medium text-gray-900 dark:text-white">
-                        {showBalances ? formatNumber(tx.amount) : '••••••'} {tx.asset}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {showBalances ? formatCurrency(tx.value) : '••••••'}
-                      </p>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      {tx.hash && (
-                        <Button variant="ghost" size="icon" className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700">
-                          <ExternalLink className="h-4 w-4" />
+                    <div className="flex items-center justify-between sm:justify-end gap-4">
+                      <div className="text-left sm:text-right">
+                        <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base">
+                          {showBalances ? formatNumber(tx.amount) : '••••••'} {tx.asset}
+                        </p>
+                        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                          {showBalances ? formatCurrency(tx.value) : '••••••'}
+                        </p>
+                      </div>
+                      
+                      <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+                        {tx.hash && (
+                          <Button variant="ghost" size="icon" className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700 h-8 w-8">
+                            <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4" />
+                          </Button>
+                        )}
+                        <Button variant="ghost" size="icon" className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700 h-8 w-8">
+                          <Copy className="h-3 w-3 sm:h-4 sm:w-4" />
                         </Button>
-                      )}
-                      <Button variant="ghost" size="icon" className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700">
-                        <Copy className="h-4 w-4" />
-                      </Button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -763,14 +805,14 @@ export function PortfolioPage() {
         )}
 
         {activeTab === 'analytics' && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
             <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
               <CardHeader>
-                <CardTitle className="text-gray-900 dark:text-white">Portfolio Metrics</CardTitle>
+                <CardTitle className="text-lg sm:text-xl text-gray-900 dark:text-white">Portfolio Metrics</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4 sm:space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="text-center p-4 bg-blue-100 dark:bg-blue-900/50 rounded-lg border border-blue-200 dark:border-blue-700">
                       <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                         {formatNumber(portfolioMetrics.avgApy)}%
