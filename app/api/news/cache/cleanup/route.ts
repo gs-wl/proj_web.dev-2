@@ -13,7 +13,7 @@ interface CachedNewsData {
 }
 
 // Function to check and clean expired cache
-export function cleanupExpiredCache(): { cleaned: boolean; message: string } {
+function cleanupExpiredCache(): { cleaned: boolean; message: string } {
   try {
     if (!fs.existsSync(CACHE_FILE_PATH)) {
       return {
