@@ -1,7 +1,9 @@
+import React from 'react'
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { Web3Provider } from '@/components/web3-provider'
+import { ThemeProvider } from '@/contexts/theme-context'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -43,9 +45,11 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body className={`${inter.className} antialiased`} suppressHydrationWarning>
-        <Web3Provider>
-          {children}
-        </Web3Provider>
+        <ThemeProvider>
+          <Web3Provider>
+            {children}
+          </Web3Provider>
+        </ThemeProvider>
       </body>
     </html>
   )

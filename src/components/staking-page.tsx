@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import {
-  Lock, Unlock, ArrowRight, Clock, Gift, PlusCircle, Repeat,
-  ChevronDown, TrendingUp, DollarSign, Calendar, Settings, Bell, User,
-  Filter, SortAsc, SortDesc
+  Lock, Unlock, ArrowRight, Clock, Gift, PlusCircle,
+  TrendingUp, DollarSign,
+  SortAsc, SortDesc
 } from 'lucide-react';
 import { useAccount } from 'wagmi';
 import { Web3StakingModal } from './web3-staking-modal';
@@ -15,16 +16,16 @@ import { useStaking } from '@/hooks/useStaking';
 import { SUPPORTED_TOKENS } from '@/lib/web3-config';
 
 const stakingOffers = [
-  { asset: 'ADA', apy: 8.65, min: 100, logo: '/ada.svg', color: 'from-blue-500 to-blue-600', status: 'active' },
-  { asset: 'ONT', apy: 7.46, min: 100, logo: '/ont.svg', color: 'from-green-500 to-green-600', status: 'active' },
-  { asset: 'SOL', apy: 12.66, min: 8, logo: '/sol.svg', color: 'from-purple-500 to-purple-600', status: 'active' },
-  { asset: 'DOT', apy: 24.5, min: 5, logo: '/dot.svg', color: 'from-pink-500 to-pink-600', status: 'inactive' },
-  { asset: 'XRP', apy: 15.47, min: 10, logo: '/xrp.svg', color: 'from-indigo-500 to-indigo-600', status: 'active' },
+  { asset: 'RWA', apy: 15.25, min: 50, logo: '/rwa.svg', color: 'from-green-500 to-emerald-600', status: 'active' },
+  { asset: 'REAL', apy: 12.80, min: 1000, logo: '/real-estate.svg', color: 'from-blue-500 to-blue-600', status: 'active' },
+  { asset: 'GOLD', apy: 8.45, min: 100, logo: '/gold.svg', color: 'from-yellow-500 to-orange-600', status: 'active' },
+  { asset: 'BOND', apy: 6.75, min: 500, logo: '/bonds.svg', color: 'from-purple-500 to-purple-600', status: 'active' },
+  { asset: 'ART', apy: 18.90, min: 250, logo: '/art.svg', color: 'from-pink-500 to-pink-600', status: 'inactive' },
 ];
 
 const userStakes = [
   { 
-    asset: 'ONT', 
+    asset: 'REAL', 
     amount: 300025.45, 
     period: '6 Month', 
     reward: 400025.015, 
@@ -34,7 +35,7 @@ const userStakes = [
     earned: 12500.75
   },
   { 
-    asset: 'ADA', 
+    asset: 'RWA', 
     amount: 150000.00, 
     period: '3 Month', 
     reward: 200000.00, 
@@ -44,7 +45,7 @@ const userStakes = [
     earned: 8750.25
   },
   { 
-    asset: 'SOL', 
+    asset: 'GOLD', 
     amount: 5000.00, 
     period: '12 Month', 
     reward: 8500.00, 
@@ -57,69 +58,69 @@ const userStakes = [
 
 const userRewards = [
   {
-    asset: 'ONT',
+    asset: 'REAL',
     availableRewards: 12.15,
     totalEarned: 125.75,
-    apy: 7.46,
+    apy: 12.80,
     lastClaimed: '2024-03-15',
     nextClaimDate: '2024-04-15',
     stakingPeriod: '6 Month',
     status: 'claimable',
     usdValue: 847.32,
-    logo: '/ont.svg',
-    color: 'from-green-500 to-green-600'
+    logo: '/real-estate.svg',
+    color: 'from-blue-500 to-blue-600'
   },
   {
-    asset: 'ADA',
+    asset: 'RWA',
     availableRewards: 45.82,
     totalEarned: 287.50,
-    apy: 8.65,
+    apy: 15.25,
     lastClaimed: '2024-03-10',
     nextClaimDate: '2024-04-10',
     stakingPeriod: '3 Month',
     status: 'claimable',
     usdValue: 1205.75,
-    logo: '/ada.svg',
-    color: 'from-blue-500 to-blue-600'
+    logo: '/rwa.svg',
+    color: 'from-green-500 to-emerald-600'
   },
   {
-    asset: 'SOL',
+    asset: 'GOLD',
     availableRewards: 2.35,
     totalEarned: 18.90,
-    apy: 12.66,
+    apy: 8.45,
     lastClaimed: '2024-03-20',
     nextClaimDate: '2024-04-20',
     stakingPeriod: '12 Month',
     status: 'claimable',
     usdValue: 425.60,
-    logo: '/sol.svg',
-    color: 'from-purple-500 to-purple-600'
+    logo: '/gold.svg',
+    color: 'from-yellow-500 to-orange-600'
   },
   {
-    asset: 'DOT',
+    asset: 'BOND',
     availableRewards: 0.00,
     totalEarned: 156.25,
-    apy: 24.5,
+    apy: 6.75,
     lastClaimed: '2024-03-25',
     nextClaimDate: '2024-04-25',
     stakingPeriod: '6 Month',
     status: 'pending',
     usdValue: 0.00,
-    logo: '/dot.svg',
-    color: 'from-pink-500 to-pink-600'
+    logo: '/bonds.svg',
+    color: 'from-purple-500 to-purple-600'
   },
   {
-    asset: 'XRP',
+    asset: 'ART',
     availableRewards: 8.75,
     totalEarned: 92.40,
-    apy: 15.47,
+    apy: 18.90,
     lastClaimed: '2024-03-12',
     nextClaimDate: '2024-04-12',
     stakingPeriod: '9 Month',
     status: 'claimable',
     usdValue: 312.85,
-    logo: '/xrp.svg',
-    color: 'from-indigo-500 to-indigo-600'
+    logo: '/art.svg',
+    color: 'from-pink-500 to-pink-600'
   }
 ];
 
@@ -130,7 +131,7 @@ const StakingPage = () => {
   const [showStakingModal, setShowStakingModal] = useState(false);
   const [showClaimModal, setShowClaimModal] = useState(false);
   const [showUnstakeModal, setShowUnstakeModal] = useState(false);
-  const [selectedAsset, setSelectedAsset] = useState('ADA');
+  const [selectedAsset, setSelectedAsset] = useState('RWA');
   const [selectedStakeId, setSelectedStakeId] = useState<bigint | undefined>(undefined);
   
   // Sorting and filtering states
@@ -167,27 +168,29 @@ const StakingPage = () => {
     };
   }, [showStakedDropdown]);
 
-  // Calculate staked amounts by asset
-  const stakedByAsset = useMemo(() => {
-    if (!userStakes) return [];
-    
-    const assetMap = new Map<string, number>();
-    userStakes.forEach(stake => {
-      // Find the token symbol from the contract address
-      const token = SUPPORTED_TOKENS.find(t => 
-        Object.values(t.addresses).includes(stake.token as any)
-      );
-      const asset = token?.symbol || 'Unknown';
-      const currentAmount = assetMap.get(asset) || 0;
-      assetMap.set(asset, currentAmount + Number(stake.amount) / 1e18); // Convert from wei
-    });
-    return Array.from(assetMap.entries()).map(([asset, amount]) => ({
-      asset,
-      amount,
-      logo: stakingOffers.find(offer => offer.asset === asset)?.logo || '',
-      color: stakingOffers.find(offer => offer.asset === asset)?.color || 'from-gray-500 to-gray-600'
-    })).sort((a, b) => b.amount - a.amount);
-  }, [userStakes]);
+  // Calculate staked amounts by asset (for future use)
+  // const stakedByAsset = useMemo(() => {
+  //   if (!userStakes) {
+  //     return [];
+  //   }
+  //   
+  //   const assetMap = new Map<string, number>();
+  //   userStakes.forEach(stake => {
+  //     // Find the token symbol from the contract address
+  //     const token = SUPPORTED_TOKENS.find(t => 
+  //       Object.values(t.addresses).includes(stake.token as `0x${string}`)
+  //     );
+  //     const asset = token?.symbol || 'Unknown';
+  //     const currentAmount = assetMap.get(asset) || 0;
+  //     assetMap.set(asset, currentAmount + Number(stake.amount) / 1e18); // Convert from wei
+  //   });
+  //   return Array.from(assetMap.entries()).map(([asset, amount]) => ({
+  //     asset,
+  //     amount,
+  //     logo: stakingOffers.find(offer => offer.asset === asset)?.logo || '',
+  //     color: stakingOffers.find(offer => offer.asset === asset)?.color || 'from-gray-500 to-gray-600'
+  //   })).sort((a, b) => b.amount - a.amount);
+  // }, [userStakes]);
 
   // Memoized sorted and filtered offerings
   const sortedOfferings = useMemo(() => {
@@ -235,7 +238,9 @@ const StakingPage = () => {
 
   // Memoized sorted and filtered stakes
   const sortedStakes = useMemo(() => {
-    if (!userStakes) return [];
+    if (!userStakes) {
+      return [];
+    }
     
     let filtered = userStakes;
     
@@ -254,28 +259,31 @@ const StakingPage = () => {
       let bValue: number | string | Date;
       
       switch (stakesSortBy) {
-        case 'amount':
+        case 'amount': {
           aValue = Number(a.amount);
           bValue = Number(b.amount);
           break;
-        case 'earned':
+        }
+        case 'earned': {
           aValue = Number(a.rewards);
           bValue = Number(b.rewards);
           break;
+        }
         case 'endDate':
           aValue = new Date(Number(a.endTime) * 1000);
           bValue = new Date(Number(b.endTime) * 1000);
           break;
-        case 'asset':
+        case 'asset': {
           const tokenA = SUPPORTED_TOKENS.find(t => 
-            Object.values(t.addresses).includes(a.token as any)
+            Object.values(t.addresses).includes(a.token as `0x${string}`)
           );
           const tokenB = SUPPORTED_TOKENS.find(t => 
-            Object.values(t.addresses).includes(b.token as any)
+            Object.values(t.addresses).includes(b.token as `0x${string}`)
           );
           aValue = tokenA?.symbol || 'Unknown';
           bValue = tokenB?.symbol || 'Unknown';
           break;
+        }
         default:
           aValue = Number(a.amount);
           bValue = Number(b.amount);
@@ -353,7 +361,9 @@ const StakingPage = () => {
 
   // Calculate total token balance for header display
   const totalTokenBalance = useMemo(() => {
-    if (!userStakes) return 0;
+    if (!userStakes) {
+      return 0;
+    }
     return userStakes.reduce((total, stake) => {
       return total + Number(stake.amount) / 1e18; // Convert from wei
     }, 0);
@@ -464,8 +474,10 @@ const StakingPage = () => {
       )}
       {tab === 'my-stakes' && (
         <MyStakesTable 
-          stakes={userStakes || []}
-          onUnstakeClick={(stakeId) => {
+          stakes={sortedStakes}
+          onUnstakeClick={(stake) => {
+            // Extract ID from stake item for Web3 stakes, or use a mock ID for mock data
+            const stakeId = stake.id || BigInt(0);
             setSelectedStakeId(stakeId);
             setShowUnstakeModal(true);
           }}
@@ -488,7 +500,7 @@ const StakingPage = () => {
           rewards={sortedRewards}
           selectedRewards={selectedRewards}
           onRewardSelect={setSelectedRewards}
-          onClaimClick={(rewards) => {
+          onClaimClick={() => {
             setShowClaimModal(true);
           }}
           sortBy={rewardsSortBy}
@@ -558,11 +570,11 @@ const OfferingGrid = ({
         <select
           value={statusFilter}
           onChange={(e) => onStatusFilterChange(e.target.value)}
-          className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         >
-          <option value="all">All Status</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
+          <option value="all" className="text-gray-900 dark:text-white">All Status</option>
+          <option value="active" className="text-gray-900 dark:text-white">Active</option>
+          <option value="inactive" className="text-gray-900 dark:text-white">Inactive</option>
         </select>
       </div>
       
@@ -604,59 +616,88 @@ const OfferingGrid = ({
         </div>
       ) : (
         offerings.map(o => (
-          <div key={o.asset} className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-6 space-y-4 relative">
+          <div key={o.asset} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-4 sm:p-6 space-y-4 relative border border-gray-100 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-600">
             {/* Status Indicator */}
-            <div className={`absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-medium ${
+            <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${
               o.status === 'active' 
-                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'
+                ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white'
+                : 'bg-gradient-to-r from-gray-400 to-gray-500 text-white'
             }`}>
-              {o.status === 'active' ? 'Active' : 'Inactive'}
+              {o.status === 'active' ? '🟢 Active' : '⚫ Inactive'}
             </div>
             
-            <div className="flex items-center gap-3">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden">
-            <img 
-              src={o.logo} 
-              alt={o.asset} 
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                // Fallback to gradient circle if image fails to load
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-                const parent = target.parentElement;
-                if (parent) {
-                  parent.className = `w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r ${o.color} flex items-center justify-center text-white font-bold text-xs sm:text-sm`;
-                  parent.textContent = o.asset.slice(0, 2);
-                }
-              }}
-            />
-          </div>
-          <div>
-            <p className="font-bold text-base sm:text-lg text-gray-900 dark:text-white">{o.asset}</p>
-            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Locked Staking</p>
-          </div>
-        </div>
-        <div>
-          <span className="text-xs sm:text-sm text-gray-500">APY</span>
-          <p className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400 flex items-center gap-1">
-            <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" /> {o.apy}%
-          </p>
-        </div>
-        <div>
-          <span className="text-xs sm:text-sm text-gray-500">Min. Stake</span>
-          <p className="font-semibold text-sm sm:text-base">{o.min} {o.asset}</p>
-        </div>
+            {/* Header with Asset Info */}
+            <div className="flex items-center gap-3 pt-2">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden ring-2 ring-blue-100 dark:ring-blue-800">
+                <Image 
+                  src={o.logo} 
+                  alt={o.asset} 
+                  width={56}
+                  height={56}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    // Fallback to gradient circle if image fails to load
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const parent = target.parentElement;
+                    if (parent) {
+                      parent.className = `w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-r ${o.color} flex items-center justify-center text-white font-bold text-sm sm:text-base ring-2 ring-blue-100 dark:ring-blue-800`;
+                      parent.textContent = o.asset.slice(0, 2);
+                    }
+                  }}
+                />
+              </div>
+              <div className="flex-1">
+                <p className="font-bold text-lg sm:text-xl text-gray-900 dark:text-white">{o.asset}</p>
+                <p className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 font-medium">🔒 Locked Staking</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Duration: 30-365 days</p>
+              </div>
+            </div>
+
+            {/* APY Highlight */}
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg p-3 border border-green-200 dark:border-green-700">
+              <div className="flex items-center justify-between">
+                <span className="text-xs sm:text-sm text-green-700 dark:text-green-300 font-medium">Annual Percentage Yield</span>
+                <TrendingUp className="w-4 h-4 text-green-600 dark:text-green-400" />
+              </div>
+              <p className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400 mt-1">
+                {o.apy}%
+              </p>
+            </div>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
+                <span className="text-xs text-gray-500 dark:text-gray-400">Min. Stake</span>
+                <p className="font-semibold text-sm text-gray-900 dark:text-white">{o.min} {o.asset}</p>
+              </div>
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
+                <span className="text-xs text-gray-500 dark:text-gray-400">Total Staked</span>
+                <p className="font-semibold text-sm text-gray-900 dark:text-white">{(Math.random() * 1000000).toFixed(0)} {o.asset}</p>
+              </div>
+            </div>
+
+            {/* Participants Info */}
+            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+              <span className="flex items-center gap-1">
+                👥 {Math.floor(Math.random() * 500) + 100} participants
+              </span>
+              <span className="flex items-center gap-1">
+                ⏱️ {Math.floor(Math.random() * 20) + 5} days left
+              </span>
+            </div>
+
+            {/* Action Button */}
             <button 
               onClick={() => onStakeClick(o.asset)}
-              className={`w-full py-2 rounded-lg font-semibold transition-all text-sm sm:text-base ${
+              className={`w-full py-3 rounded-lg font-semibold transition-all text-sm sm:text-base shadow-md hover:shadow-lg ${
                 o.status === 'active'
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700'
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 transform hover:scale-[1.02]'
                   : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
               }`}
               disabled={o.status !== 'active'}
             >
-              {o.status === 'active' ? 'Stake Now' : 'Unavailable'}
+              {o.status === 'active' ? '🚀 Stake Now' : '❌ Unavailable'}
             </button>
           </div>
         ))
@@ -666,9 +707,27 @@ const OfferingGrid = ({
 );
 
 /* ---------------------------------- */
+// Union type to handle both mock data and real Web3 data
+type StakeItem = {
+  asset?: string;
+  amount: number | bigint;
+  period?: string;
+  reward?: number;
+  endDate?: string;
+  status?: string;
+  startDate?: string;
+  earned?: number;
+  id?: bigint;
+  token?: string;
+  rewards?: bigint;
+  startTime?: bigint;
+  endTime?: bigint;
+  claimed?: boolean;
+};
+
 interface MyStakesTableProps {
-  stakes: any[];
-  onUnstakeClick: (stakeId: bigint) => void;
+  stakes: StakeItem[];
+  onUnstakeClick: (stake: StakeItem) => void;
   sortBy: string;
   sortOrder: 'asc' | 'desc';
   statusFilter: string;
@@ -693,11 +752,11 @@ const MyStakesTable = ({
         <select
           value={statusFilter}
           onChange={(e) => onStatusFilterChange(e.target.value)}
-          className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         >
-          <option value="all">All Status</option>
-          <option value="active">Active</option>
-          <option value="completed">Completed</option>
+          <option value="all" className="text-gray-900 dark:text-white">All Status</option>
+          <option value="active" className="text-gray-900 dark:text-white">Active</option>
+          <option value="completed" className="text-gray-900 dark:text-white">Completed</option>
         </select>
       </div>
       
@@ -777,11 +836,11 @@ const MyStakesTable = ({
                   </div>
                   <div>
                     <span className="text-gray-500">Earned</span>
-                    <p className="font-medium text-green-600 dark:text-green-400">{s.earned.toLocaleString()} {s.asset}</p>
+                    <p className="font-medium text-green-600 dark:text-green-400">{(s.earned || 0).toLocaleString()} {s.asset}</p>
                   </div>
                   <div>
                     <span className="text-gray-500">Est. Reward</span>
-                    <p className="font-medium">{s.reward.toLocaleString()} {s.asset}</p>
+                    <p className="font-medium">{(s.reward || 0).toLocaleString()} {s.asset}</p>
                   </div>
                   <div>
                     <span className="text-gray-500">End Date</span>
@@ -811,7 +870,7 @@ const MyStakesTable = ({
             <tr key={`${s.asset}-${s.startDate}`}>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{s.asset}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{s.amount.toLocaleString()} {s.asset}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 dark:text-green-400 font-medium">{s.earned.toLocaleString()} {s.asset}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 dark:text-green-400 font-medium">{(s.earned || 0).toLocaleString()} {s.asset}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{s.period}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{s.endDate}</td>
               <td className="px-6 py-4 whitespace-nowrap">
@@ -929,14 +988,15 @@ const RewardsTable = ({
         
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-6">
           <div className="flex items-center gap-3 mb-2">
-            <Settings className="w-5 h-5 text-purple-500" />
-            <span className="text-sm text-gray-500 dark:text-gray-400">Auto-Claim</span>
+            <TrendingUp className="w-5 h-5 text-purple-500" />
+            <span className="text-sm text-gray-500 dark:text-gray-400">Total Reinvested</span>
           </div>
-          <label className="inline-flex items-center cursor-pointer">
-            <input type="checkbox" className="sr-only peer" />
-            <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-            <span className="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300">Enable</span>
-          </label>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+            ${rewards.reduce((total, reward) => total + (reward.totalEarned * 0.15 * (reward.usdValue / reward.availableRewards || 0)), 0).toLocaleString()}
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            You reinvested
+          </p>
         </div>
       </div>
 
@@ -947,11 +1007,11 @@ const RewardsTable = ({
           <select
             value={statusFilter}
             onChange={(e) => onStatusFilterChange(e.target.value)}
-            className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
-            <option value="all">All Status</option>
-            <option value="claimable">Claimable</option>
-            <option value="pending">Pending</option>
+            <option value="all" className="text-gray-900 dark:text-white">All Status</option>
+            <option value="claimable" className="text-gray-900 dark:text-white">Claimable</option>
+            <option value="pending" className="text-gray-900 dark:text-white">Pending</option>
           </select>
         </div>
         

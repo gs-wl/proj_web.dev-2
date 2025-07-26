@@ -4,21 +4,16 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Search, TrendingUp, Filter, Star, Zap, Wind, Sun, Battery, Leaf, Mountain,
-  DollarSign, Users, Calendar, ArrowRight, PlusCircle, BarChart3, Globe,
-  Shield, Wallet, Menu, X, ChevronDown, Activity, Coins, Layers,
-  ArrowUpDown, Droplets, TrendingDown, Settings, Bell, User,
-  ExternalLink, Copy, Lock, Unlock, Target, Briefcase, FileText,
-  Database, GitBranch, Timer, Repeat, Network
+  DollarSign, Users, ArrowRight, PlusCircle, BarChart3, Globe,
+  Shield, Menu, X, Activity, Coins,
+  ArrowUpDown, Droplets, Bell, Lock, Target, Briefcase, FileText,
+  Database, GitBranch, Network, Moon
 } from 'lucide-react';
 import { StakingPage } from './index';
 import { WalletConnectButton, CompactWalletButton } from './wallet-connect-button';
+import { useTheme } from '@/contexts/theme-context';
 
-/* ---------- Color themes ---------- */
-const themes = [
-  { id: 'light', label: 'Light', className: 'theme-light' },
-  { id: 'dark',  label: 'Dark',  className: 'theme-dark' },
-  { id: 'green', label: 'Green', className: 'theme-green' },
-];
+
 
 /* ---------- Dummy data kept identical ---------- */
 
@@ -92,7 +87,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, setUserToggledSidebar, activeTab
           <p className="text-xs text-gray-500 dark:text-gray-400">Real World Assets</p>
         </div>
       </div>
-      <button onClick={() => { setSidebarOpen(false); setUserToggledSidebar(true); }} className="lg:hidden p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded" aria-label="Close sidebar"><X className="w-5 h-5" /></button>
+      <button onClick={() => { setSidebarOpen(false); setUserToggledSidebar(true); }} className="lg:hidden p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded" aria-label="Close sidebar"><X className="w-5 h-5 text-gray-700 dark:text-gray-300" /></button>
     </div>
     <nav className="overflow-y-auto h-full pb-20">
       {menuItems.map(section => (
@@ -163,7 +158,7 @@ const TokenCard = ({ token }: TokenCardProps) => (
     <div className="grid grid-cols-2 gap-4 mb-4">
       <div>
         <p className="text-sm text-gray-500 dark:text-gray-400">Price</p>
-        <div className="flex items-center gap-2"><p className="font-semibold text-lg">{token.price}</p><span className={`text-xs ${token.change24h.startsWith('+') ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>{token.change24h}</span></div>
+        <div className="flex items-center gap-2"><p className="font-semibold text-lg text-gray-900 dark:text-white">{token.price}</p><span className={`text-xs ${token.change24h.startsWith('+') ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>{token.change24h}</span></div>
       </div>
       <div>
         <p className="text-sm text-gray-500 dark:text-gray-400">APY</p>
@@ -171,11 +166,11 @@ const TokenCard = ({ token }: TokenCardProps) => (
       </div>
       <div>
         <p className="text-sm text-gray-500 dark:text-gray-400">TVL</p>
-        <p className="font-semibold">{token.tvl}</p>
+        <p className="font-semibold text-gray-900 dark:text-white">{token.tvl}</p>
       </div>
       <div>
         <p className="text-sm text-gray-500 dark:text-gray-400">Liquidity</p>
-        <p className="font-semibold">{token.liquidity}</p>
+        <p className="font-semibold text-gray-900 dark:text-white">{token.liquidity}</p>
       </div>
     </div>
     <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-4">
@@ -186,8 +181,8 @@ const TokenCard = ({ token }: TokenCardProps) => (
       <span>{token.holders} holders</span>
     </div>
     <div className="flex items-center justify-between text-sm mb-4">
-      <div><p className="text-gray-500 dark:text-gray-400">Yield Type</p><p className="font-medium">{token.yieldType}</p></div>
-      <div className="text-right"><p className="text-gray-500 dark:text-gray-400">Next Reward</p><p className="font-medium">{token.nextReward}</p></div>
+      <div><p className="text-gray-500 dark:text-gray-400">Yield Type</p><p className="font-medium text-gray-900 dark:text-white">{token.yieldType}</p></div>
+      <div className="text-right"><p className="text-gray-500 dark:text-gray-400">Next Reward</p><p className="font-medium text-gray-900 dark:text-white">{token.nextReward}</p></div>
     </div>
     <div className="flex gap-2">
       <button className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center gap-2"><Coins className="w-4 h-4" />Trade</button>
@@ -213,6 +208,13 @@ const Web3RWAPlatform = () => {
   // Update URL when activeTab changes
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
+    
+    // Navigate to portfolio page if portfolio tab is selected
+    if (tab === 'portfolio') {
+      router.push('/portfolio');
+      return;
+    }
+    
     const params = new URLSearchParams(searchParams.toString());
     params.set('tab', tab);
     router.push(`?${params.toString()}`, { scroll: false });
@@ -222,13 +224,8 @@ const Web3RWAPlatform = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userToggledSidebar, setUserToggledSidebar] = useState(false);
 
-  const [theme, setTheme] = useState('light');
+  const { theme, toggleTheme } = useTheme();
   const [sortBy, setSortBy] = useState('apy');
-
-  React.useEffect(() => {
-    document.body.classList.remove(...themes.map(t => t.className));
-    document.body.classList.add(themes.find(t => t.id === theme)?.className || 'theme-light');
-  }, [theme]);
 
   // Handle responsive sidebar state
   React.useEffect(() => {
@@ -261,8 +258,12 @@ const Web3RWAPlatform = () => {
 
   const sortedAssets = useMemo(() => {
     const arr = [...filteredAssets];
-    if (sortBy === 'apy') arr.sort((a, b) => parseFloat(b.apy) - parseFloat(a.apy));
-    if (sortBy === 'tvl') arr.sort((a, b) => parseFloat(b.tvl.replace(/[^0-9.]/g, '')) - parseFloat(a.tvl.replace(/[^0-9.]/g, '')));
+    if (sortBy === 'apy') {
+      arr.sort((a, b) => parseFloat(b.apy) - parseFloat(a.apy));
+    }
+    if (sortBy === 'tvl') {
+      arr.sort((a, b) => parseFloat(b.tvl.replace(/[^0-9.]/g, '')) - parseFloat(a.tvl.replace(/[^0-9.]/g, '')));
+    }
     return arr;
   }, [filteredAssets, sortBy]);
 
@@ -275,14 +276,14 @@ const Web3RWAPlatform = () => {
           <div className="flex items-center justify-between">
             {/* Left side */}
             <div className="flex items-center gap-2 sm:gap-4">
-              <button onClick={() => { setSidebarOpen(true); setUserToggledSidebar(true); }} className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg" aria-label="Open sidebar"><Menu className="w-5 h-5" /></button>
+              <button onClick={() => { setSidebarOpen(true); setUserToggledSidebar(true); }} className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg" aria-label="Open sidebar"><Menu className="w-5 h-5 text-gray-700 dark:text-gray-300" /></button>
               <button onClick={() => { setSidebarOpen(!sidebarOpen); setUserToggledSidebar(true); }} className="hidden lg:block p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg" aria-label="Toggle sidebar">
-                {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                {sidebarOpen ? <X className="w-5 h-5 text-gray-700 dark:text-gray-300" /> : <Menu className="w-5 h-5 text-gray-700 dark:text-gray-300" />}
               </button>
               
               {/* Network info - hidden on mobile */}
               <div className="hidden lg:block h-6 w-px bg-gray-300 dark:bg-gray-800"></div>
-              <div className="hidden lg:flex items-center gap-4 text-sm">
+              <div className="hidden lg:flex items-center gap-4 text-sm text-gray-700 dark:text-gray-300">
                 <div>Gas: 23 gwei</div><div>ETH: $2,847</div>
               </div>
             </div>
@@ -305,14 +306,19 @@ const Web3RWAPlatform = () => {
               
               {/* Notifications - always visible */}
               <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg relative h-10 w-10 flex items-center justify-center" aria-label="Notifications">
-                <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
+                <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 dark:text-gray-300" />
                 <div className="absolute -top-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full"></div>
               </button>
               
-              {/* Theme selector - compact on mobile */}
-              <select value={theme} onChange={e => setTheme(e.target.value)} className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-1 sm:px-2 py-2 text-xs sm:text-sm font-medium h-10" aria-label="Theme selector">
-                {themes.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
-              </select>
+              {/* Theme toggle button */}
+              <button
+                onClick={toggleTheme}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg h-10 w-10 flex items-center justify-center"
+                title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+                aria-label="Toggle theme"
+              >
+                {theme === 'light' ? <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 dark:text-gray-300" /> : <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 dark:text-gray-300" />}
+              </button>
             </div>
           </div>
         </header>
@@ -345,12 +351,12 @@ const Web3RWAPlatform = () => {
               {/* Search & filters */}
               <section className="flex flex-col lg:flex-row gap-4 mb-6">
                 <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
                   <input type="text" placeholder="Search tokenized assets, pools, or projects..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-900" />
                 </div>
                 <div className="flex gap-2">
-                  <button className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 px-4 py-3 rounded-lg flex items-center gap-2 transition-all"><Filter className="w-4 h-4" />Filters</button>
-                  <button className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 px-4 py-3 rounded-lg flex items-center gap-2 transition-all"><BarChart3 className="w-4 h-4" />Analytics</button>
+                  <button className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 px-4 py-3 rounded-lg flex items-center gap-2 transition-all text-gray-700 dark:text-gray-300"><Filter className="w-4 h-4 text-gray-700 dark:text-gray-300" />Filters</button>
+                  <button className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 px-4 py-3 rounded-lg flex items-center gap-2 transition-all text-gray-700 dark:text-gray-300"><BarChart3 className="w-4 h-4 text-gray-700 dark:text-gray-300" />Analytics</button>
                 </div>
               </section>
 
@@ -374,9 +380,9 @@ const Web3RWAPlatform = () => {
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Tokenized Assets</h2>
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600 dark:text-gray-400">Sort by:</span>
-                    <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm">
-                      <option value="apy">Highest APY</option>
-                      <option value="tvl">Highest TVL</option>
+                    <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white">
+                      <option value="apy" className="text-gray-900 dark:text-white">Highest APY</option>
+                      <option value="tvl" className="text-gray-900 dark:text-white">Highest TVL</option>
                     </select>
                   </div>
                 </div>
@@ -396,7 +402,7 @@ const Web3RWAPlatform = () => {
                     <div className="flex items-center justify-between mb-4"><card.icon className="w-8 h-8" /><ArrowRight className="w-5 h-5" /></div>
                     <h3 className="text-xl font-bold mb-2">{card.title}</h3>
                     <p className="mb-4">{card.desc}</p>
-                    <button className="gradient-card-button px-4 py-2 rounded-lg font-semibold transition-all">Start</button>
+                    <button className="bg-white/95 hover:bg-white text-gray-800 hover:text-gray-900 px-4 py-2 rounded-lg font-semibold transition-all backdrop-blur-sm">Start</button>
                   </div>
                 ))}
               </section>
@@ -405,56 +411,7 @@ const Web3RWAPlatform = () => {
         </main>
       </div>
 
-      <style jsx global>{`
-        .theme-light {
-          --bg: #f9fafb;
-          --text: #111827;
-          --card: #ffffff;
-          --border: #e5e7eb;
-        }
-        .theme-dark {
-          --bg: #090a12;
-          --text: #e5e7eb;
-          --card: #111827;
-          --border: #374151;
-        }
-        .theme-green {
-          --bg: #033d27;
-          --text: #b2f5ea;
-          --card: #044b32;
-          --border: #065f46;
-        }
-        body {
-          background: var(--bg);
-          color: var(--text);
-        }
-        .bg-white {
-          background: var(--card) !important;
-        }
-        .bg-gray-50 {
-          background: var(--bg) !important;
-        }
-        .border-gray-200, .border-gray-300 {
-          border-color: var(--border) !important;
-        }
-        .text-gray-900 {
-          color: var(--text) !important;
-        }
-        .text-gray-600, .text-gray-700 {
-          color: var(--text) !important;
-          opacity: 0.85;
-        }
-        /* Custom button styles for gradient cards */
-        .gradient-card-button {
-          background: rgba(255, 255, 255, 0.95) !important;
-          color: #1f2937 !important;
-          backdrop-filter: blur(8px);
-        }
-        .gradient-card-button:hover {
-          background: rgba(255, 255, 255, 1) !important;
-          color: #111827 !important;
-        }
-      `}</style>
+
     </div>
   );
 };

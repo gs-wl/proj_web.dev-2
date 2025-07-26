@@ -3,6 +3,7 @@ export { default as Web3RWAPlatform } from './rwa-defi-platform'
 
 // Page Components
 export { Homepage } from './homepage'
+export { PortfolioPage } from './portfolio-page'
 export { default as StakingPage } from './staking-page'
 export { default as StakingActivationModal } from './staking-activation-modal'
 export { default as ClaimRewardsModal } from './claim-rewards-modal'

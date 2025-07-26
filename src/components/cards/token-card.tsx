@@ -63,7 +63,7 @@ export const TokenCard = ({ token }: TokenCardProps) => {
           <span className="bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 px-3 py-1.5 rounded-full text-xs font-semibold dark:from-emerald-900 dark:to-green-900 dark:text-emerald-200 shadow-sm">
             {token.type}
           </span>
-          <button className="text-gray-400 hover:text-yellow-500 dark:hover:text-yellow-300 hover:scale-110 transition-all duration-200" aria-label="Favorite">
+          <button className="text-gray-500 hover:text-yellow-500 dark:text-gray-400 dark:hover:text-yellow-300 hover:scale-110 transition-all duration-200" aria-label="Favorite">
             <Star className="w-5 h-5" />
           </button>
         </div>
@@ -95,7 +95,7 @@ export const TokenCard = ({ token }: TokenCardProps) => {
           <p className="text-xs font-medium text-green-600 dark:text-green-400 uppercase tracking-wide mb-2">APY Reward</p>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            <p className="font-bold text-lg bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">{token.apy}%</p>
+            <p className="font-bold text-lg text-green-600 dark:text-green-400">{token.apy}%</p>
           </div>
         </div>
         <div className="bg-purple-50 dark:bg-purple-950/30 rounded-xl p-4 border border-purple-100 dark:border-purple-900/50">
@@ -136,7 +136,7 @@ export const TokenCard = ({ token }: TokenCardProps) => {
         <div className="text-right">
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Next Reward</p>
           <div className="flex items-center justify-end gap-1">
-            <Clock className="w-3 h-3 text-gray-500" />
+            <Clock className="w-3 h-3 text-gray-500 dark:text-gray-400" />
             <p className="font-semibold text-gray-900 dark:text-white">{token.nextReward}</p>
           </div>
         </div>

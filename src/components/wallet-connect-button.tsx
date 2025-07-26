@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { Wallet, ChevronDown, Copy, ExternalLink, LogOut } from 'lucide-react';
+import { Wallet, ChevronDown } from 'lucide-react';
 
 export function WalletConnectButton() {
   return (
@@ -28,6 +29,7 @@ export function WalletConnectButton() {
 
         return (
           <div
+            className="flex justify-center"
             {...(!ready && {
               'aria-hidden': true,
               'style': {
@@ -85,10 +87,11 @@ export function WalletConnectButton() {
                         }}
                       >
                         {chain.iconUrl && (
-                          <img
+                          <Image
                             alt={chain.name ?? 'Chain icon'}
                             src={chain.iconUrl}
-                            style={{ width: 20, height: 20 }}
+                            width={20}
+                            height={20}
                           />
                         )}
                       </div>
@@ -145,6 +148,7 @@ export function CompactWalletButton() {
 
         return (
           <div
+            className="flex justify-center"
             {...(!ready && {
               'aria-hidden': true,
               'style': {
@@ -200,10 +204,11 @@ export function CompactWalletButton() {
                           overflow: 'hidden',
                         }}
                       >
-                        <img
+                        <Image
                           alt={chain.name ?? 'Chain icon'}
                           src={chain.iconUrl}
-                          style={{ width: 20, height: 20 }}
+                          width={20}
+                          height={20}
                         />
                       </div>
                     ) : (
