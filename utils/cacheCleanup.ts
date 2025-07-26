@@ -1,4 +1,4 @@
-import { cleanupExpiredCache } from '../app/api/news/cache/cleanup/route';
+import { cleanupExpiredCache } from './newsCache';
 
 class CacheCleanupScheduler {
   private intervalId: NodeJS.Timeout | null = null;

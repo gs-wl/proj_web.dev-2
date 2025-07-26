@@ -1,17 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import { cleanupExpiredCache } from './cleanup/route';
-
-const CACHE_FILE_PATH = path.join(process.cwd(), 'src/data/news-cache.json');
-const CACHE_EXPIRY_HOURS = 24;
-
-interface CachedNewsData {
-  twitterPosts: any[];
-  aiNews: any[];
-  lastUpdated: string;
-  version: number;
-}
+import { cleanupExpiredCache, CACHE_FILE_PATH, CACHE_EXPIRY_HOURS, type CachedNewsData } from '../../../../utils/newsCache';
 
 // GET - Retrieve cached data
 export async function GET() {
