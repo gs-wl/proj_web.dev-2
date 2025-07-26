@@ -7,7 +7,7 @@ import { useWhitelist } from '@/hooks/useWhitelist';
 import { useAdmin } from '@/hooks/useAdmin';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
+import {
   Leaf, 
   Zap, 
   Shield, 
@@ -44,6 +44,7 @@ export function Homepage() {
   const { isAdmin } = useAdmin();
   const [currentSlide, setCurrentSlide] = useState(0);
 
+
   // Whitelist status logging - no automatic redirect
   useEffect(() => {
     console.log('🏠 Homepage Whitelist Status:');
@@ -69,6 +70,8 @@ export function Homepage() {
     }, 5000);
     return () => clearInterval(timer);
   }, []);
+
+
 
   const heroSlides = [
     {
@@ -241,7 +244,7 @@ export function Homepage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white pb-20 md:pb-0">
       {/* Navigation */}
       <nav className="bg-white/95 backdrop-blur-sm border-b border-green-100 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
@@ -251,6 +254,7 @@ export function Homepage() {
               <span className="text-2xl font-bold text-gray-900">RWA.defi</span>
             </div>
             
+            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
               <a href="#features" className="text-gray-600 hover:text-green-600 transition-colors">Features</a>
               <a href="#assets" className="text-gray-600 hover:text-green-600 transition-colors">Assets</a>
@@ -266,7 +270,8 @@ export function Homepage() {
               )}
             </div>
 
-            <div className="flex items-center space-x-4">
+            {/* Desktop Actions */}
+            <div className="hidden md:flex items-center space-x-4">
               <ConnectButton />
               {isConnected && !isLoading && (
                 <>
@@ -289,8 +294,15 @@ export function Homepage() {
                 </>
               )}
             </div>
+
+            {/* Mobile Actions */}
+            <div className="md:hidden flex items-center space-x-2">
+              <ConnectButton />
+            </div>
           </div>
         </div>
+
+
       </nav>
 
       {/* Hero Section */}
@@ -759,6 +771,73 @@ export function Homepage() {
           </div>
         </div>
       </footer>
+
+      {/* Bottom Navigation - Mobile Only */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden z-50">
+        <div className="grid grid-cols-5 h-16">
+          <a 
+            href="#features" 
+            className="flex flex-col items-center justify-center space-y-1 text-gray-600 hover:text-green-600 transition-colors active:bg-gray-50"
+            onClick={() => {
+              document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            <Shield className="h-4 w-4" />
+            <span className="text-xs font-medium">Features</span>
+          </a>
+          
+          <a 
+            href="#assets" 
+            className="flex flex-col items-center justify-center space-y-1 text-gray-600 hover:text-green-600 transition-colors active:bg-gray-50"
+            onClick={() => {
+              document.getElementById('assets')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            <DollarSign className="h-4 w-4" />
+            <span className="text-xs font-medium">Assets</span>
+          </a>
+          
+          <a 
+            href="#roadmap" 
+            className="flex flex-col items-center justify-center space-y-1 text-gray-600 hover:text-green-600 transition-colors active:bg-gray-50"
+            onClick={() => {
+              document.getElementById('roadmap')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            <Target className="h-4 w-4" />
+            <span className="text-xs font-medium">Roadmap</span>
+          </a>
+          
+          <a 
+            href="#team" 
+            className="flex flex-col items-center justify-center space-y-1 text-gray-600 hover:text-green-600 transition-colors active:bg-gray-50"
+            onClick={() => {
+              document.getElementById('team')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            <Users className="h-4 w-4" />
+            <span className="text-xs font-medium">Team</span>
+          </a>
+          
+          {isConnected && isAdmin ? (
+            <button 
+              onClick={() => router.push('/admin')}
+              className="flex flex-col items-center justify-center space-y-1 text-gray-600 hover:text-green-600 transition-colors active:bg-gray-50"
+            >
+              <Shield className="h-4 w-4" />
+              <span className="text-xs font-medium">Admin</span>
+            </button>
+          ) : (
+            <a 
+              href="#" 
+              className="flex flex-col items-center justify-center space-y-1 text-gray-400 cursor-not-allowed"
+            >
+              <Shield className="h-4 w-4" />
+              <span className="text-xs font-medium">Admin</span>
+            </a>
+          )}
+        </div>
+      </nav>
     </div>
   );
 }
