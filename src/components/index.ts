@@ -1,30 +1,266 @@
-// Main Platform Component
-export { default as Web3RWAPlatform } from './rwa-defi-platform'
+/**
+ * @fileoverview Component exports for RWA DeFi Platform
+ * @description Centralized export file for all React components
+ * @version 1.0.0
+ * @author RWA DeFi Team
+ */
 
-// Page Components
-export { Homepage } from './homepage'
-export { PortfolioPage } from './portfolio-page'
-export { default as StakingPage } from './staking-page'
-export { default as StakingActivationModal } from './staking-activation-modal'
-export { default as ClaimRewardsModal } from './claim-rewards-modal'
-export { default as UnstakeModal } from './unstake-modal'
+// =============================================================================
+// CORE PLATFORM COMPONENTS
+// =============================================================================
 
-// Guards
-export { WhitelistGuard } from './whitelist-guard'
+/**
+ * Main platform component - Entry point for the RWA DeFi application
+ */
+export { default as Web3RWAPlatform } from './rwa-defi-platform';
 
-// Layout Components
-export { Sidebar } from './layout/sidebar'
+/**
+ * Web3 provider wrapper for blockchain connectivity
+ */
+export { Web3Provider } from './web3-provider';
 
-// Card Components
-export { TokenCard } from './cards/token-card'
+// =============================================================================
+// PAGE COMPONENTS
+// =============================================================================
 
-// UI Components
-export { Button } from './ui/button'
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from './ui/card'
-export { Input } from './ui/input'
-export { Textarea } from './ui/textarea'
+/**
+ * Landing page component with hero section and feature overview
+ */
+export { Homepage } from './homepage';
 
-// You can add more component exports here as you create them
-// export { Header } from './layout/header'
-// export { Footer } from './layout/footer'
-// export { Navigation } from './layout/navigation'
+/**
+ * User portfolio dashboard showing assets and performance
+ */
+export { PortfolioPage } from './portfolio-page';
+
+/**
+ * Staking interface for earning rewards on RWA tokens
+ */
+export { default as StakingPage } from './staking-page';
+
+/**
+ * News page displaying Twitter/X posts and AI-powered RWA/DeFi news
+ */
+export { default as NewsPage } from './news-page';
+
+// =============================================================================
+// MODAL COMPONENTS
+// =============================================================================
+
+/**
+ * Modal for activating staking on specific tokens
+ */
+export { default as StakingActivationModal } from './staking-activation-modal';
+
+/**
+ * Modal for claiming accumulated staking rewards
+ */
+export { default as ClaimRewardsModal } from './claim-rewards-modal';
+
+/**
+ * Modal for unstaking tokens and withdrawing principal
+ */
+export { default as UnstakeModal } from './unstake-modal';
+
+/**
+ * Web3-enabled claim modal with blockchain integration
+ */
+export { Web3ClaimModal } from './web3-claim-modal';
+
+/**
+ * Web3-enabled staking modal with smart contract interaction
+ */
+export { Web3StakingModal } from './web3-staking-modal';
+
+/**
+ * Web3-enabled unstaking modal with transaction handling
+ */
+export { Web3UnstakeModal } from './web3-unstake-modal';
+
+// =============================================================================
+// AUTHENTICATION & SECURITY
+// =============================================================================
+
+/**
+ * Guard component for whitelist-only access
+ */
+export { WhitelistGuard } from './whitelist-guard';
+
+/**
+ * Guard component for admin-only access
+ */
+export { AdminGuard } from './admin-guard';
+
+// =============================================================================
+// WALLET COMPONENTS
+// =============================================================================
+
+/**
+ * Wallet connection button with RainbowKit integration
+ */
+export { WalletConnectButton, CompactWalletButton } from './wallet-connect-button';
+
+/**
+ * Wallet status indicator showing connection state
+ */
+export { WalletStatus } from './wallet-status';
+
+// =============================================================================
+// LAYOUT COMPONENTS
+// =============================================================================
+
+/**
+ * Application sidebar with navigation menu
+ */
+export { Sidebar } from './layout/sidebar';
+
+// =============================================================================
+// CARD COMPONENTS
+// =============================================================================
+
+/**
+ * Token card component for displaying RWA token information
+ */
+export { TokenCard } from './cards/token-card';
+
+// =============================================================================
+// UI COMPONENTS (Design System)
+// =============================================================================
+
+/**
+ * Base button component with variants and sizes
+ */
+export { Button } from './ui/button';
+
+/**
+ * Card components for content containers
+ */
+export {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+  CardContent
+} from './ui/card';
+
+/**
+ * Input component for form fields
+ */
+export { Input } from './ui/input';
+
+/**
+ * Textarea component for multi-line text input
+ */
+export { Textarea } from './ui/textarea';
+
+// =============================================================================
+// TYPE EXPORTS
+// =============================================================================
+
+/**
+ * Re-export all component types for external use
+ */
+export type { ButtonProps } from './ui/button';
+export type * from './types';
+
+/**
+ * Component type definitions
+ */
+export type {
+  BaseComponentProps,
+  BaseModalProps,
+  StakingModalProps,
+  ClaimModalProps,
+  UnstakeModalProps,
+  GuardProps,
+  WhitelistGuardProps,
+  AdminGuardProps,
+  WalletConnectButtonProps,
+  WalletStatusProps,
+  TokenInfo,
+  TokenCardProps,
+  SidebarProps,
+  InputProps,
+  TextareaProps,
+  Web3ProviderProps,
+  HomepageProps,
+  PortfolioPageProps,
+  StakingPageProps,
+  NewsPageProps,
+  ThemeContextType,
+  ModalComponents,
+  GuardComponents,
+  WalletComponents,
+} from './types';
+
+// =============================================================================
+// COMPONENT GROUPS (for easier imports)
+// =============================================================================
+
+/**
+ * All modal components grouped for convenience
+ */
+export const Modals = {
+  StakingActivation: require('./staking-activation-modal').default,
+  ClaimRewards: require('./claim-rewards-modal').default,
+  Unstake: require('./unstake-modal').default,
+  Web3Claim: require('./web3-claim-modal').Web3ClaimModal,
+  Web3Staking: require('./web3-staking-modal').Web3StakingModal,
+  Web3Unstake: require('./web3-unstake-modal').Web3UnstakeModal,
+} as const;
+
+/**
+ * All guard components grouped for convenience
+ */
+export const Guards = {
+  Whitelist: require('./whitelist-guard').WhitelistGuard,
+  Admin: require('./admin-guard').AdminGuard,
+} as const;
+
+/**
+ * All wallet-related components grouped for convenience
+ */
+export const Wallet = {
+  ConnectButton: require('./wallet-connect-button').WalletConnectButton,
+  CompactButton: require('./wallet-connect-button').CompactWalletButton,
+  Status: require('./wallet-status').WalletStatus,
+} as const;
+
+// =============================================================================
+// DEVELOPMENT NOTES
+// =============================================================================
+
+/**
+ * @todo Add Header component to layout
+ * @todo Add Footer component to layout
+ * @todo Add Navigation component to layout
+ * @todo Implement loading states for all async components
+ * @todo Add error boundary components
+ * @todo Create reusable form components
+ * @todo Add animation/transition components
+ * @todo Implement accessibility features
+ */
+
+// =============================================================================
+// USAGE EXAMPLES
+// =============================================================================
+
+/**
+ * @example Basic component import
+ * ```typescript
+ * import { Button, Card } from '@/components';
+ * ```
+ * 
+ * @example Modal group import
+ * ```typescript
+ * import { Modals } from '@/components';
+ * const StakingModal = Modals.StakingActivation;
+ * ```
+ * 
+ * @example Guard usage
+ * ```typescript
+ * import { Guards } from '@/components';
+ * <Guards.Whitelist><YourComponent /></Guards.Whitelist>
+ * ```
+ */

@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { CacheCleanupAdmin } from '@/components/cache-cleanup-admin';
 
 interface WhitelistRequest {
   id: string;
@@ -149,13 +150,13 @@ function AdminDashboard() {
     const baseClasses = "px-2 py-1 rounded-full text-xs font-medium";
     switch (status) {
       case 'pending':
-        return `${baseClasses} bg-yellow-100 text-yellow-800`;
+        return `${baseClasses} bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200`;
       case 'approved':
-        return `${baseClasses} bg-green-100 text-green-800`;
+        return `${baseClasses} bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200`;
       case 'rejected':
-        return `${baseClasses} bg-red-100 text-red-800`;
+        return `${baseClasses} bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200`;
       default:
-        return `${baseClasses} bg-gray-100 text-gray-800`;
+        return `${baseClasses} bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200`;
     }
   };
 
@@ -170,18 +171,18 @@ function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
                 <Shield className="h-8 w-8 text-green-600" />
                 Admin Dashboard
               </h1>
-              <p className="text-gray-600 mt-2">Manage whitelist requests and platform access</p>
-              <p className="text-sm text-gray-500 mt-1 font-mono">Connected as: {address}</p>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">Manage whitelist requests and platform access</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-mono">Connected as: {address}</p>
             </div>
             <div className="flex items-center gap-3">
               <Button
@@ -210,8 +211,8 @@ function AdminDashboard() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Requests</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Requests</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
                 </div>
                 <Users className="h-8 w-8 text-blue-600" />
               </div>
@@ -222,8 +223,8 @@ function AdminDashboard() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Pending</p>
-                  <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Pending</p>
+                  <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending}</p>
                 </div>
                 <Clock className="h-8 w-8 text-yellow-600" />
               </div>
@@ -234,8 +235,8 @@ function AdminDashboard() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Approved</p>
-                  <p className="text-2xl font-bold text-green-600">{stats.approved}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Approved</p>
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.approved}</p>
                 </div>
                 <CheckCircle className="h-8 w-8 text-green-600" />
               </div>
@@ -246,8 +247,8 @@ function AdminDashboard() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Rejected</p>
-                  <p className="text-2xl font-bold text-red-600">{stats.rejected}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Rejected</p>
+                  <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.rejected}</p>
                 </div>
                 <XCircle className="h-8 w-8 text-red-600" />
               </div>
@@ -255,10 +256,15 @@ function AdminDashboard() {
           </Card>
         </div>
 
+        {/* Cache Cleanup Management */}
+        <div className="mb-8">
+          <CacheCleanupAdmin />
+        </div>
+
         {/* Requests Table */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
               <Users className="h-5 w-5" />
               Whitelist Requests
             </CardTitle>
@@ -267,30 +273,30 @@ function AdminDashboard() {
             {loading ? (
               <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
-                <p className="text-gray-600">Loading requests...</p>
+                <p className="text-gray-600 dark:text-gray-400">Loading requests...</p>
               </div>
             ) : requests.length === 0 ? (
               <div className="text-center py-8">
                 <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">No whitelist requests found</p>
+                <p className="text-gray-600 dark:text-gray-400">No whitelist requests found</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Status</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Applicant</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Wallet Address</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Company</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Experience</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Submitted</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
+                    <tr className="border-b border-gray-200 dark:border-gray-700">
+                      <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Status</th>
+                      <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Applicant</th>
+                      <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Wallet Address</th>
+                      <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Company</th>
+                      <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Experience</th>
+                      <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Submitted</th>
+                      <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {requests.map((request) => (
-                      <tr key={request.id} className="border-b border-gray-100 hover:bg-gray-50">
+                      <tr key={request.id} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-2">
                             {getStatusIcon(request.status)}
@@ -301,8 +307,8 @@ function AdminDashboard() {
                         </td>
                         <td className="py-4 px-4">
                           <div>
-                            <p className="font-medium text-gray-900">{request.name}</p>
-                            <p className="text-sm text-gray-600 flex items-center gap-1">
+                            <p className="font-medium text-gray-900 dark:text-white">{request.name}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
                               <Mail className="h-3 w-3" />
                               {request.email}
                             </p>
@@ -311,7 +317,7 @@ function AdminDashboard() {
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-1">
                             <Wallet className="h-3 w-3 text-gray-400" />
-                            <span className="font-mono text-sm">
+                            <span className="font-mono text-sm text-gray-900 dark:text-gray-300">
                               {request.walletAddress.slice(0, 6)}...{request.walletAddress.slice(-4)}
                             </span>
                           </div>
@@ -319,16 +325,16 @@ function AdminDashboard() {
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-1">
                             <Building className="h-3 w-3 text-gray-400" />
-                            <span className="text-sm">{request.company}</span>
+                            <span className="text-sm text-gray-900 dark:text-gray-300">{request.company}</span>
                           </div>
                         </td>
                         <td className="py-4 px-4">
-                          <span className="text-sm capitalize">{request.defiExperience}</span>
+                          <span className="text-sm capitalize text-gray-900 dark:text-gray-300">{request.defiExperience}</span>
                         </td>
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-1">
                             <Calendar className="h-3 w-3 text-gray-400" />
-                            <span className="text-sm">{formatDate(request.submittedAt)}</span>
+                            <span className="text-sm text-gray-900 dark:text-gray-300">{formatDate(request.submittedAt)}</span>
                           </div>
                         </td>
                         <td className="py-4 px-4">
@@ -355,7 +361,7 @@ function AdminDashboard() {
                               </Button>
                             </div>
                           ) : (
-                            <span className="text-sm text-gray-500">-</span>
+                            <span className="text-sm text-gray-500 dark:text-gray-400">-</span>
                           )}
                         </td>
                       </tr>

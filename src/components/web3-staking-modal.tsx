@@ -205,7 +205,7 @@ export function Web3StakingModal({ isOpen, onClose, selectedAsset = 'ADA' }: Web
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
                       placeholder="Enter amount"
-                      className="w-full bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                      className="w-full bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                       disabled={isLoading}
                     />
                     <button
@@ -230,11 +230,11 @@ export function Web3StakingModal({ isOpen, onClose, selectedAsset = 'ADA' }: Web
                         const period = STAKING_PERIODS.find(p => p.label === e.target.value);
                         if (period) setSelectedPeriod(period);
                       }}
-                      className="w-full appearance-none bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 pr-10 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                      className="w-full appearance-none bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 pr-10 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                       disabled={isLoading}
                     >
                       {STAKING_PERIODS.map((period) => (
-                        <option key={period.days} value={period.label}>
+                        <option key={period.days} value={period.label} className="text-gray-900 dark:text-white bg-white dark:bg-gray-800">
                           {period.label} ({period.multiplier}x rewards)
                         </option>
                       ))}
@@ -250,23 +250,23 @@ export function Web3StakingModal({ isOpen, onClose, selectedAsset = 'ADA' }: Web
                 <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 space-y-3">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-500 dark:text-gray-400">Stake Date</span>
-                    <span className="font-medium flex items-center gap-1">
+                    <span className="font-medium text-gray-900 dark:text-white flex items-center gap-1">
                       <Calendar className="w-4 h-4" /> {new Date().toLocaleDateString()} {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-500 dark:text-gray-400">Stake End Date</span>
-                    <span className="font-medium flex items-center gap-1">
+                    <span className="font-medium text-gray-900 dark:text-white flex items-center gap-1">
                       <Clock className="w-4 h-4" /> {new Date(Date.now() + selectedPeriod.days * 24 * 60 * 60 * 1000).toLocaleDateString()}
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-500 dark:text-gray-400">Redemption Date</span>
-                    <span className="font-medium">{new Date(Date.now() + (selectedPeriod.days + 5) * 24 * 60 * 60 * 1000).toLocaleDateString()}</span>
+                    <span className="font-medium text-gray-900 dark:text-white">{new Date(Date.now() + (selectedPeriod.days + 5) * 24 * 60 * 60 * 1000).toLocaleDateString()}</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-500 dark:text-gray-400">Chain</span>
-                    <span className="font-medium">ETH</span>
+                    <span className="font-medium text-gray-900 dark:text-white">ETH</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-500 dark:text-gray-400">Est. APY</span>

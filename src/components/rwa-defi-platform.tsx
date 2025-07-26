@@ -1,15 +1,16 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   Search, TrendingUp, Filter, Star, Zap, Wind, Sun, Battery, Leaf, Mountain,
   DollarSign, Users, ArrowRight, PlusCircle, BarChart3, Globe,
   Shield, Menu, X, Activity, Coins,
   ArrowUpDown, Droplets, Bell, Lock, Target, Briefcase, FileText,
-  Database, GitBranch, Network, Moon
+  Database, GitBranch, Network, Moon, Home
 } from 'lucide-react';
-import { StakingPage } from './index';
+import { useNewsCache } from '@/hooks/useNewsCache';
+import { StakingPage, NewsPage } from './index';
 import { WalletConnectButton, CompactWalletButton } from './wallet-connect-button';
 import { useTheme } from '@/contexts/theme-context';
 
@@ -77,7 +78,20 @@ interface SidebarProps {
   setActiveTab: (tab: string) => void;
 }
 
-const Sidebar = ({ sidebarOpen, setSidebarOpen, setUserToggledSidebar, activeTab, setActiveTab }: SidebarProps) => (
+const Sidebar = ({ sidebarOpen, setSidebarOpen, setUserToggledSidebar, activeTab, setActiveTab }: SidebarProps) => {
+  const pathname = usePathname();
+  
+  // Determine active tab from pathname
+  const getActiveTabFromPath = () => {
+    if (pathname === '/app') return 'market-overview';
+    if (pathname === '/portfolio') return 'portfolio';
+    const segments = pathname.split('/');
+    return segments[segments.length - 1] || 'market-overview';
+  };
+  
+  const currentActiveTab = getActiveTabFromPath();
+  
+  return (
   <aside className={`fixed left-0 top-0 h-full w-80 bg-white dark:bg-gray-900 shadow-xl z-50 transform transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:shadow-none lg:border-r lg:border-gray-200 dark:lg:border-gray-800`}>
     <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
       <div className="flex items-center gap-3">
@@ -97,7 +111,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, setUserToggledSidebar, activeTab
             {section.items.map(item => {
               const Icon = item.icon;
               return (
-                <button key={item.id} onClick={() => setActiveTab(item.id)} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-all ${ activeTab === item.id ? 'bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
+                <button key={item.id} onClick={() => setActiveTab(item.id)} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-all ${ currentActiveTab === item.id ? 'bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
                   <Icon className="w-4 h-4" />
                   <span className="flex-1">{item.label}</span>
                   {item.badge && <span className={`px-2 py-1 text-xs rounded-full ${item.badge === 'NEW' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>{item.badge}</span>}
@@ -114,7 +128,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, setUserToggledSidebar, activeTab
       </div>
     </nav>
   </aside>
-);
+  );
+};
 
 /* ---------- Token Card ---------- */
 interface TokenCardProps {
@@ -192,32 +207,36 @@ const TokenCard = ({ token }: TokenCardProps) => (
 );
 
 /* ---------- Main platform ---------- */
-const Web3RWAPlatform = () => {
+interface Web3RWAPlatformProps {
+  activeTab?: string;
+}
+
+const Web3RWAPlatform = ({ activeTab: propActiveTab }: Web3RWAPlatformProps = {}) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState('market-overview');
+  const [activeTab, setActiveTab] = useState(propActiveTab || 'market-overview');
   
-  // Initialize activeTab from URL on component mount
+  // News notification system
+  const { notification } = useNewsCache();
+  
+  // Update activeTab when prop changes
   useEffect(() => {
-    const tabFromUrl = searchParams.get('tab');
-    if (tabFromUrl) {
-      setActiveTab(tabFromUrl);
+    if (propActiveTab) {
+      setActiveTab(propActiveTab);
     }
-  }, [searchParams]);
+  }, [propActiveTab]);
   
-  // Update URL when activeTab changes
+  // Handle tab navigation with proper routing
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     
-    // Navigate to portfolio page if portfolio tab is selected
-    if (tab === 'portfolio') {
+    // Navigate to the appropriate route
+    if (tab === 'market-overview') {
+      router.push('/app');
+    } else if (tab === 'portfolio') {
       router.push('/portfolio');
-      return;
+    } else {
+      router.push(`/app/${tab}`);
     }
-    
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('tab', tab);
-    router.push(`?${params.toString()}`, { scroll: false });
   };
   const [selectedAssetType, setSelectedAssetType] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -281,6 +300,16 @@ const Web3RWAPlatform = () => {
                 {sidebarOpen ? <X className="w-5 h-5 text-gray-700 dark:text-gray-300" /> : <Menu className="w-5 h-5 text-gray-700 dark:text-gray-300" />}
               </button>
               
+              {/* Home button */}
+              <button 
+                onClick={() => router.push('/')}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors" 
+                title="Go to Homepage"
+                aria-label="Go to Homepage"
+              >
+                <Home className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+              </button>
+              
               {/* Network info - hidden on mobile */}
               <div className="hidden lg:block h-6 w-px bg-gray-300 dark:bg-gray-800"></div>
               <div className="hidden lg:flex items-center gap-4 text-sm text-gray-700 dark:text-gray-300">
@@ -305,9 +334,27 @@ const Web3RWAPlatform = () => {
               </button>
               
               {/* Notifications - always visible */}
-              <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg relative h-10 w-10 flex items-center justify-center" aria-label="Notifications">
+              <button 
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg relative h-10 w-10 flex items-center justify-center group" 
+                aria-label="Notifications"
+                onClick={() => handleTabChange('news')}
+                title={notification.hasNewUpdates ? 
+                  `${notification.newTwitterCount + notification.newNewsCount} new updates` : 
+                  'News up to date'
+                }
+              >
                 <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 dark:text-gray-300" />
-                <div className="absolute -top-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full"></div>
+                {notification.hasNewUpdates ? (
+                  <div className="absolute -top-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full flex items-center justify-center">
+                    <span className="text-xs text-white font-bold hidden sm:block">
+                      {notification.newTwitterCount + notification.newNewsCount > 9 ? '9+' : notification.newTwitterCount + notification.newNewsCount}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="absolute -top-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <span className="text-xs text-white font-bold hidden sm:block">✓</span>
+                  </div>
+                )}
               </button>
               
               {/* Theme toggle button */}
@@ -326,6 +373,8 @@ const Web3RWAPlatform = () => {
         <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
           {activeTab === 'staking' ? (
             <StakingPage />
+          ) : activeTab === 'news' ? (
+            <NewsPage />
           ) : (
             <>
               {/* Stats */}
@@ -417,3 +466,4 @@ const Web3RWAPlatform = () => {
 };
 
 export default Web3RWAPlatform;
+export type { Web3RWAPlatformProps };

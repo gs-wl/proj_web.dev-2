@@ -24,31 +24,31 @@ const stakingOffers = [
 ];
 
 const userStakes = [
-  { 
-    asset: 'REAL', 
-    amount: 300025.45, 
-    period: '6 Month', 
-    reward: 400025.015, 
+  {
+    asset: 'REAL',
+    amount: 300025.45,
+    period: '6 Month',
+    reward: 400025.015,
     endDate: '2024-08-15',
     status: 'active',
     startDate: '2024-02-15',
     earned: 12500.75
   },
-  { 
-    asset: 'RWA', 
-    amount: 150000.00, 
-    period: '3 Month', 
-    reward: 200000.00, 
+  {
+    asset: 'RWA',
+    amount: 150000.00,
+    period: '3 Month',
+    reward: 200000.00,
     endDate: '2024-06-20',
     status: 'completed',
     startDate: '2024-03-20',
     earned: 8750.25
   },
-  { 
-    asset: 'GOLD', 
-    amount: 5000.00, 
-    period: '12 Month', 
-    reward: 8500.00, 
+  {
+    asset: 'GOLD',
+    amount: 5000.00,
+    period: '12 Month',
+    reward: 8500.00,
     endDate: '2025-01-10',
     status: 'active',
     startDate: '2024-01-10',
@@ -133,16 +133,16 @@ const StakingPage = () => {
   const [showUnstakeModal, setShowUnstakeModal] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState('RWA');
   const [selectedStakeId, setSelectedStakeId] = useState<bigint | undefined>(undefined);
-  
+
   // Sorting and filtering states
   const [offeringSortBy, setOfferingSortBy] = useState('apy'); // apy | asset | min
   const [offeringSortOrder, setOfferingSortOrder] = useState<'asc' | 'desc'>('desc');
   const [offeringStatusFilter, setOfferingStatusFilter] = useState('all'); // all | active | inactive
-  
+
   const [stakesSortBy, setStakesSortBy] = useState('amount'); // amount | earned | endDate | asset
   const [stakesSortOrder, setStakesSortOrder] = useState<'asc' | 'desc'>('desc');
   const [stakesStatusFilter, setStakesStatusFilter] = useState('all'); // all | active | completed
-  
+
   // Rewards sorting and filtering states
   const [rewardsSortBy, setRewardsSortBy] = useState('availableRewards'); // availableRewards | totalEarned | apy | asset | usdValue
   const [rewardsSortOrder, setRewardsSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -195,17 +195,17 @@ const StakingPage = () => {
   // Memoized sorted and filtered offerings
   const sortedOfferings = useMemo(() => {
     let filtered = stakingOffers;
-    
+
     // Apply status filter
     if (offeringStatusFilter !== 'all') {
       filtered = filtered.filter(offer => offer.status === offeringStatusFilter);
     }
-    
+
     // Apply sorting
     return filtered.sort((a, b) => {
       let aValue: number | string;
       let bValue: number | string;
-      
+
       switch (offeringSortBy) {
         case 'apy':
           aValue = a.apy;
@@ -223,14 +223,14 @@ const StakingPage = () => {
           aValue = a.apy;
           bValue = b.apy;
       }
-      
+
       if (typeof aValue === 'string' && typeof bValue === 'string') {
-        return offeringSortOrder === 'asc' 
+        return offeringSortOrder === 'asc'
           ? aValue.localeCompare(bValue)
           : bValue.localeCompare(aValue);
       }
-      
-      return offeringSortOrder === 'asc' 
+
+      return offeringSortOrder === 'asc'
         ? (aValue as number) - (bValue as number)
         : (bValue as number) - (aValue as number);
     });
@@ -241,9 +241,9 @@ const StakingPage = () => {
     if (!userStakes) {
       return [];
     }
-    
+
     let filtered = userStakes;
-    
+
     // Apply status filter
     if (stakesStatusFilter !== 'all') {
       filtered = filtered.filter(stake => {
@@ -252,12 +252,12 @@ const StakingPage = () => {
         return status === stakesStatusFilter;
       });
     }
-    
+
     // Apply sorting
     return filtered.sort((a, b) => {
       let aValue: number | string | Date;
       let bValue: number | string | Date;
-      
+
       switch (stakesSortBy) {
         case 'amount': {
           aValue = Number(a.amount);
@@ -274,10 +274,10 @@ const StakingPage = () => {
           bValue = new Date(Number(b.endTime) * 1000);
           break;
         case 'asset': {
-          const tokenA = SUPPORTED_TOKENS.find(t => 
+          const tokenA = SUPPORTED_TOKENS.find(t =>
             Object.values(t.addresses).includes(a.token as `0x${string}`)
           );
-          const tokenB = SUPPORTED_TOKENS.find(t => 
+          const tokenB = SUPPORTED_TOKENS.find(t =>
             Object.values(t.addresses).includes(b.token as `0x${string}`)
           );
           aValue = tokenA?.symbol || 'Unknown';
@@ -288,20 +288,20 @@ const StakingPage = () => {
           aValue = Number(a.amount);
           bValue = Number(b.amount);
       }
-      
+
       if (typeof aValue === 'string' && typeof bValue === 'string') {
-        return stakesSortOrder === 'asc' 
+        return stakesSortOrder === 'asc'
           ? aValue.localeCompare(bValue)
           : bValue.localeCompare(aValue);
       }
-      
+
       if (aValue instanceof Date && bValue instanceof Date) {
-        return stakesSortOrder === 'asc' 
+        return stakesSortOrder === 'asc'
           ? aValue.getTime() - bValue.getTime()
           : bValue.getTime() - aValue.getTime();
       }
-      
-      return stakesSortOrder === 'asc' 
+
+      return stakesSortOrder === 'asc'
         ? (aValue as number) - (bValue as number)
         : (bValue as number) - (aValue as number);
     });
@@ -310,17 +310,17 @@ const StakingPage = () => {
   // Memoized sorted and filtered rewards
   const sortedRewards = useMemo(() => {
     let filtered = userRewards;
-    
+
     // Apply status filter
     if (rewardsStatusFilter !== 'all') {
       filtered = filtered.filter(reward => reward.status === rewardsStatusFilter);
     }
-    
+
     // Apply sorting
     return filtered.sort((a, b) => {
       let aValue: number | string | Date;
       let bValue: number | string | Date;
-      
+
       switch (rewardsSortBy) {
         case 'availableRewards':
           aValue = a.availableRewards;
@@ -346,14 +346,14 @@ const StakingPage = () => {
           aValue = a.availableRewards;
           bValue = b.availableRewards;
       }
-      
+
       if (typeof aValue === 'string' && typeof bValue === 'string') {
-        return rewardsSortOrder === 'asc' 
+        return rewardsSortOrder === 'asc'
           ? aValue.localeCompare(bValue)
           : bValue.localeCompare(aValue);
       }
-      
-      return rewardsSortOrder === 'asc' 
+
+      return rewardsSortOrder === 'asc'
         ? (aValue as number) - (bValue as number)
         : (bValue as number) - (aValue as number);
     });
@@ -389,9 +389,9 @@ const StakingPage = () => {
                   </div>
                 </div>
               </div>
-              
+
               {/* Add Stake Button */}
-              <button 
+              <button
                 onClick={() => setShowStakingModal(true)}
                 className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-green-600 hover:to-emerald-700 transition-all min-h-[40px]"
               >
@@ -452,7 +452,7 @@ const StakingPage = () => {
 
       {/* ---- Dynamic Sections ---- */}
       {tab === 'offerings' && (
-        <OfferingGrid 
+        <OfferingGrid
           offerings={sortedOfferings}
           onStakeClick={(asset) => {
             setSelectedAsset(asset);
@@ -473,7 +473,7 @@ const StakingPage = () => {
         />
       )}
       {tab === 'my-stakes' && (
-        <MyStakesTable 
+        <MyStakesTable
           stakes={sortedStakes}
           onUnstakeClick={(stake) => {
             // Extract ID from stake item for Web3 stakes, or use a mock ID for mock data
@@ -524,12 +524,12 @@ const StakingPage = () => {
         onClose={() => setShowStakingModal(false)}
         selectedAsset={selectedAsset}
       />
-      
+
       <Web3ClaimModal
         isOpen={showClaimModal}
         onClose={() => setShowClaimModal(false)}
       />
-      
+
       <Web3UnstakeModal
         isOpen={showUnstakeModal}
         onClose={() => {
@@ -553,14 +553,14 @@ interface OfferingGridProps {
   onStatusFilterChange: (status: string) => void;
 }
 
-const OfferingGrid = ({ 
-  offerings, 
-  onStakeClick, 
-  sortBy, 
-  sortOrder, 
-  statusFilter, 
-  onSortChange, 
-  onStatusFilterChange 
+const OfferingGrid = ({
+  offerings,
+  onStakeClick,
+  sortBy,
+  sortOrder,
+  statusFilter,
+  onSortChange,
+  onStatusFilterChange
 }: OfferingGridProps) => (
   <div className="space-y-6">
     {/* Sorting and Filtering Controls */}
@@ -577,7 +577,7 @@ const OfferingGrid = ({
           <option value="inactive" className="text-gray-900 dark:text-white">Inactive</option>
         </select>
       </div>
-      
+
       <div className="flex flex-wrap gap-2">
         <span className="text-sm font-medium text-gray-700 dark:text-gray-300 self-center">Sort by:</span>
         {[
@@ -588,11 +588,10 @@ const OfferingGrid = ({
           <button
             key={key}
             onClick={() => onSortChange(key)}
-            className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-              sortBy === key
+            className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-all ${sortBy === key
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-            }`}
+              }`}
           >
             {label}
             {sortBy === key && (
@@ -618,20 +617,19 @@ const OfferingGrid = ({
         offerings.map(o => (
           <div key={o.asset} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-4 sm:p-6 space-y-4 relative border border-gray-100 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-600">
             {/* Status Indicator */}
-            <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${
-              o.status === 'active' 
+            <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${o.status === 'active'
                 ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white'
                 : 'bg-gradient-to-r from-gray-400 to-gray-500 text-white'
-            }`}>
+              }`}>
               {o.status === 'active' ? '🟢 Active' : '⚫ Inactive'}
             </div>
-            
+
             {/* Header with Asset Info */}
             <div className="flex items-center gap-3 pt-2">
               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden ring-2 ring-blue-100 dark:ring-blue-800">
-                <Image 
-                  src={o.logo} 
-                  alt={o.asset} 
+                <Image
+                  src={o.logo}
+                  alt={o.asset}
                   width={56}
                   height={56}
                   className="w-full h-full object-cover"
@@ -688,16 +686,25 @@ const OfferingGrid = ({
             </div>
 
             {/* Action Button */}
-            <button 
+            <button
               onClick={() => onStakeClick(o.asset)}
-              className={`w-full py-3 rounded-lg font-semibold transition-all text-sm sm:text-base shadow-md hover:shadow-lg ${
-                o.status === 'active'
+              className={`w-full py-3 rounded-lg font-semibold transition-all text-sm sm:text-base shadow-md hover:shadow-lg flex items-center justify-center gap-2 ${o.status === 'active'
                   ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 transform hover:scale-[1.02]'
                   : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-              }`}
+                }`}
               disabled={o.status !== 'active'}
             >
-              {o.status === 'active' ? '🚀 Stake Now' : '❌ Unavailable'}
+              {o.status === 'active' ? (
+                <>
+                  <Lock className="w-4 h-4" />
+                  Stake Now
+                </>
+              ) : (
+                <>
+                  <Lock className="w-4 h-4" />
+                  Unavailable
+                </>
+              )}
             </button>
           </div>
         ))
@@ -735,14 +742,14 @@ interface MyStakesTableProps {
   onStatusFilterChange: (status: string) => void;
 }
 
-const MyStakesTable = ({ 
-  stakes, 
-  onUnstakeClick, 
-  sortBy, 
-  sortOrder, 
-  statusFilter, 
-  onSortChange, 
-  onStatusFilterChange 
+const MyStakesTable = ({
+  stakes,
+  onUnstakeClick,
+  sortBy,
+  sortOrder,
+  statusFilter,
+  onSortChange,
+  onStatusFilterChange
 }: MyStakesTableProps) => (
   <div className="space-y-6">
     {/* Sorting and Filtering Controls */}
@@ -759,7 +766,7 @@ const MyStakesTable = ({
           <option value="completed" className="text-gray-900 dark:text-white">Completed</option>
         </select>
       </div>
-      
+
       <div className="flex flex-wrap gap-2">
         <span className="text-sm font-medium text-gray-700 dark:text-gray-300 self-center">Sort by:</span>
         {[
@@ -771,11 +778,10 @@ const MyStakesTable = ({
           <button
             key={key}
             onClick={() => onSortChange(key)}
-            className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-              sortBy === key
+            className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-all ${sortBy === key
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-            }`}
+              }`}
           >
             {label}
             {sortBy === key && (
@@ -806,26 +812,24 @@ const MyStakesTable = ({
                   <div>
                     <div className="flex items-center gap-2">
                       <h3 className="font-bold text-gray-900 dark:text-white">{s.asset}</h3>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        s.status === 'active' 
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${s.status === 'active'
                           ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
                           : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
-                      }`}>
+                        }`}>
                         {s.status === 'active' ? 'Active' : 'Completed'}
                       </span>
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-300">{s.period}</p>
                   </div>
-                  <button 
+                  <button
                     onClick={() => onUnstakeClick(s)}
-                    className={`font-semibold text-sm ${
-                      s.status === 'active'
+                    className={`font-semibold text-sm ${s.status === 'active'
                         ? 'text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200'
                         : 'text-gray-400 cursor-not-allowed'
-                    }`}
+                      }`}
                     disabled={s.status !== 'active'}
                   >
-                    <Unlock className="inline w-4 h-4 mr-1" /> 
+                    <Unlock className="inline w-4 h-4 mr-1" />
                     {s.status === 'active' ? 'Unstake' : 'Completed'}
                   </button>
                 </div>
@@ -848,59 +852,57 @@ const MyStakesTable = ({
                   </div>
                 </div>
               </div>
-      ))}
-    </div>
+            ))}
+          </div>
 
-    {/* Desktop view */}
-    <div className="hidden sm:block">
-      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-        <thead className="bg-gray-50 dark:bg-gray-900">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Earned</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-          {stakes.map(s => (
-            <tr key={`${s.asset}-${s.startDate}`}>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{s.asset}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{s.amount.toLocaleString()} {s.asset}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 dark:text-green-400 font-medium">{(s.earned || 0).toLocaleString()} {s.asset}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{s.period}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{s.endDate}</td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  s.status === 'active' 
-                    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                    : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
-                }`}>
-                  {s.status === 'active' ? 'Active' : 'Completed'}
-                </span>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <button 
-                  onClick={() => onUnstakeClick(s)}
-                  className={`font-semibold ${
-                    s.status === 'active'
-                      ? 'text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200'
-                      : 'text-gray-400 cursor-not-allowed'
-                  }`}
-                  disabled={s.status !== 'active'}
-                >
-                  <Unlock className="inline w-4 h-4 mr-1" /> 
-                  {s.status === 'active' ? 'Unstake' : 'Completed'}
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          {/* Desktop view */}
+          <div className="hidden sm:block">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-900">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Earned</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                {stakes.map(s => (
+                  <tr key={`${s.asset}-${s.startDate}`}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{s.asset}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{s.amount.toLocaleString()} {s.asset}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 dark:text-green-400 font-medium">{(s.earned || 0).toLocaleString()} {s.asset}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{s.period}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{s.endDate}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${s.status === 'active'
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                          : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
+                        }`}>
+                        {s.status === 'active' ? 'Active' : 'Completed'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <button
+                        onClick={() => onUnstakeClick(s)}
+                        className={`font-semibold ${s.status === 'active'
+                            ? 'text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200'
+                            : 'text-gray-400 cursor-not-allowed'
+                          }`}
+                        disabled={s.status !== 'active'}
+                      >
+                        <Unlock className="inline w-4 h-4 mr-1" />
+                        {s.status === 'active' ? 'Unstake' : 'Completed'}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </section>
@@ -920,20 +922,20 @@ interface RewardsTableProps {
   onStatusFilterChange: (status: string) => void;
 }
 
-const RewardsTable = ({ 
-  rewards, 
+const RewardsTable = ({
+  rewards,
   selectedRewards,
   onRewardSelect,
-  onClaimClick, 
-  sortBy, 
-  sortOrder, 
-  statusFilter, 
-  onSortChange, 
-  onStatusFilterChange 
+  onClaimClick,
+  sortBy,
+  sortOrder,
+  statusFilter,
+  onSortChange,
+  onStatusFilterChange
 }: RewardsTableProps) => {
   const claimableRewards = rewards.filter(r => r.status === 'claimable');
   const totalClaimableValue = claimableRewards.reduce((total, reward) => total + reward.usdValue, 0);
-  
+
   const handleSelectAll = () => {
     if (selectedRewards.length === claimableRewards.length) {
       onRewardSelect([]);
@@ -972,7 +974,7 @@ const RewardsTable = ({
             {claimableRewards.length} tokens available
           </p>
         </div>
-        
+
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-6">
           <div className="flex items-center gap-3 mb-2">
             <TrendingUp className="w-5 h-5 text-blue-500" />
@@ -985,7 +987,7 @@ const RewardsTable = ({
             All time rewards
           </p>
         </div>
-        
+
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-6">
           <div className="flex items-center gap-3 mb-2">
             <TrendingUp className="w-5 h-5 text-purple-500" />
@@ -1014,7 +1016,7 @@ const RewardsTable = ({
             <option value="pending" className="text-gray-900 dark:text-white">Pending</option>
           </select>
         </div>
-        
+
         <div className="flex flex-wrap gap-2">
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300 self-center">Sort by:</span>
           {[
@@ -1027,11 +1029,10 @@ const RewardsTable = ({
             <button
               key={key}
               onClick={() => onSortChange(key)}
-              className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                sortBy === key
+              className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-all ${sortBy === key
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-              }`}
+                }`}
             >
               {label}
               {sortBy === key && (
@@ -1053,13 +1054,13 @@ const RewardsTable = ({
               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
             />
             <span className="text-sm text-gray-700 dark:text-gray-300">
-              {selectedRewards.length > 0 
-                ? `${selectedRewards.length} selected` 
+              {selectedRewards.length > 0
+                ? `${selectedRewards.length} selected`
                 : 'Select all claimable rewards'
               }
             </span>
           </div>
-          
+
           {selectedRewards.length > 0 && (
             <button
               onClick={handleClaimSelected}
@@ -1104,17 +1105,16 @@ const RewardsTable = ({
                       </div>
                       <div>
                         <h3 className="font-bold text-gray-900 dark:text-white">{reward.asset}</h3>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          reward.status === 'claimable' 
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${reward.status === 'claimable'
                             ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
                             : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
-                        }`}>
+                          }`}>
                           {reward.status === 'claimable' ? 'Claimable' : 'Pending'}
                         </span>
                       </div>
                     </div>
                     {reward.status === 'claimable' && (
-                      <button 
+                      <button
                         onClick={() => onClaimClick([reward.asset])}
                         className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-200 font-semibold text-sm"
                       >
@@ -1200,17 +1200,16 @@ const RewardsTable = ({
                         {reward.apy}%
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          reward.status === 'claimable' 
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${reward.status === 'claimable'
                             ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
                             : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
-                        }`}>
+                          }`}>
                           {reward.status === 'claimable' ? 'Claimable' : 'Pending'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {reward.status === 'claimable' ? (
-                          <button 
+                          <button
                             onClick={() => onClaimClick([reward.asset])}
                             className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-200 font-semibold"
                           >

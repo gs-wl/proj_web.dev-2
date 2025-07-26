@@ -1,0 +1,163 @@
+
+> rwa-defi-platform@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.30
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1958ms
+ ✓ Compiled /api/news/twitter in 386ms (58 modules)
+🚀 Starting X scraping with Playwright...
+📱 Navigating to https://x.com/rwadefi...
+❌ Selector [data-testid="tweet"] failed: page.waitForSelector: Timeout 5000ms exceeded.
+Call log:
+[2m  - waiting for locator('[data-testid="tweet"]') to be visible[22m
+
+❌ Selector article[data-testid="tweet"] failed: page.waitForSelector: Timeout 5000ms exceeded.
+Call log:
+[2m  - waiting for locator('article[data-testid="tweet"]') to be visible[22m
+
+❌ Selector [role="article"] failed: page.waitForSelector: Timeout 5000ms exceeded.
+Call log:
+[2m  - waiting for locator('[role="article"]') to be visible[22m
+
+❌ Selector .css-175oi2r[data-testid="tweet"] failed: page.waitForSelector: Timeout 5000ms exceeded.
+Call log:
+[2m  - waiting for locator('.css-175oi2r[data-testid="tweet"]') to be visible[22m
+
+Trying Nitter: https://nitter.poast.org/rwadefi/rss
+Trying Nitter: https://nitter.1d4.us/rwadefi/rss
+❌ Failed https://nitter.1d4.us: fetch failed
+Trying Nitter: https://nitter.kavin.rocks/rwadefi/rss
+Trying Nitter: https://nitter.fdn.fr/rwadefi/rss
+❌ Failed https://nitter.fdn.fr: fetch failed
+Using enhanced mock data with AI generation...
+ GET /api/news/twitter 200 in 32614ms
+ ✓ Compiled in 19ms
+ ✓ Compiled /api/news/twitter in 87ms (58 modules)
+🚀 Starting X scraping with Playwright...
+📱 Navigating to https://mobile.x.com/rwadefi...
+📄 Page content length: 350878
+🔗 Current URL: https://mobile.x.com/rwadefi
+❌ No tweet content found - page structure may have changed
+Trying Nitter: https://nitter.poast.org/rwadefi/rss
+Trying Nitter: https://nitter.1d4.us/rwadefi/rss
+❌ Failed https://nitter.1d4.us: fetch failed
+Trying Nitter: https://nitter.kavin.rocks/rwadefi/rss
+Trying Nitter: https://nitter.fdn.fr/rwadefi/rss
+❌ Failed https://nitter.fdn.fr: fetch failed
+Using enhanced mock data with AI generation...
+ GET /api/news/twitter 200 in 11913ms
+ ✓ Compiled in 16ms
+   Reload env: .env.local
+ ✓ Compiled in 1489ms (202 modules)
+ ○ Compiling /api/news/twitter ...
+ ✓ Compiled /api/news/twitter in 535ms (58 modules)
+ ⨯ TypeError: __webpack_require__.a is not a function
+    at eval (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader.js?name=app%2Fapi%2Fnews%2Ftwitter%2Froute&page=%2Fapi%2Fnews%2Ftwitter%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fnews%2Ftwitter%2Froute.ts&appDir=%2FUsers%2Ftushershikder%2FDesktop%2FMyapps%2Frwa%2Fv5%2Fproj_web%2Fapp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=%2FUsers%2Ftushershikder%2FDesktop%2FMyapps%2Frwa%2Fv5%2Fproj_web&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=&preferredRegion=&middlewareConfig=e30%3D!:1:21)
+    at (rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader.js?name=app%2Fapi%2Fnews%2Ftwitter%2Froute&page=%2Fapi%2Fnews%2Ftwitter%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fnews%2Ftwitter%2Froute.ts&appDir=%2FUsers%2Ftushershikder%2FDesktop%2FMyapps%2Frwa%2Fv5%2Fproj_web%2Fapp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=%2FUsers%2Ftushershikder%2FDesktop%2FMyapps%2Frwa%2Fv5%2Fproj_web&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=&preferredRegion=&middlewareConfig=e30%3D! (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/app/api/news/twitter/route.js:52:1)
+    at __webpack_require__ (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/webpack-runtime.js:33:43)
+    at __webpack_exec__ (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/app/api/news/twitter/route.js:72:39)
+    at /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/app/api/news/twitter/route.js:73:83
+    at __webpack_require__.X (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/webpack-runtime.js:168:21)
+    at /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/app/api/news/twitter/route.js:73:47
+    at Object.<anonymous> (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/app/api/news/twitter/route.js:76:3)
+    at Module._compile (node:internal/modules/cjs/loader:1529:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+    at Module.load (node:internal/modules/cjs/loader:1275:32)
+    at Module._load (node:internal/modules/cjs/loader:1096:12)
+    at Module.require (node:internal/modules/cjs/loader:1298:19)
+    at mod.require (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:182:18)
+    at requirePage (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/require.js:109:84)
+    at /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/load-components.js:103:84
+    at async loadComponentsImpl (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/load-components.js:103:26)
+    at async DevServer.findPageComponentsImpl (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/next-server.js:714:36)
+    at async DevServer.findPageComponents (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderPageComponent (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/base-server.js:1910:24)
+    at async DevServer.renderToResponseImpl (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/base-server.js:818:17)
+    at async /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async handleRequest (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/lib/router-server.js:359:24)
+    at async requestHandlerImpl (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/lib/router-server.js:383:13)
+    at async Server.requestListener (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  page: '/api/news/twitter'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 1060ms (488 modules)
+ GET /api/news/twitter 500 in 1764ms
+ ⨯ TypeError: __webpack_require__.a is not a function
+    at eval (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader.js?name=app%2Fapi%2Fnews%2Ftwitter%2Froute&page=%2Fapi%2Fnews%2Ftwitter%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fnews%2Ftwitter%2Froute.ts&appDir=%2FUsers%2Ftushershikder%2FDesktop%2FMyapps%2Frwa%2Fv5%2Fproj_web%2Fapp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=%2FUsers%2Ftushershikder%2FDesktop%2FMyapps%2Frwa%2Fv5%2Fproj_web&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=&preferredRegion=&middlewareConfig=e30%3D!:1:21)
+    at (rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader.js?name=app%2Fapi%2Fnews%2Ftwitter%2Froute&page=%2Fapi%2Fnews%2Ftwitter%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fnews%2Ftwitter%2Froute.ts&appDir=%2FUsers%2Ftushershikder%2FDesktop%2FMyapps%2Frwa%2Fv5%2Fproj_web%2Fapp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=%2FUsers%2Ftushershikder%2FDesktop%2FMyapps%2Frwa%2Fv5%2Fproj_web&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=&preferredRegion=&middlewareConfig=e30%3D! (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/app/api/news/twitter/route.js:52:1)
+    at __webpack_require__ (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/webpack-runtime.js:33:43)
+    at __webpack_exec__ (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/app/api/news/twitter/route.js:72:39)
+    at /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/app/api/news/twitter/route.js:73:83
+    at __webpack_require__.X (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/webpack-runtime.js:168:21)
+    at /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/app/api/news/twitter/route.js:73:47
+    at Object.<anonymous> (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/app/api/news/twitter/route.js:76:3)
+    at Module._compile (node:internal/modules/cjs/loader:1529:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+    at Module.load (node:internal/modules/cjs/loader:1275:32)
+    at Module._load (node:internal/modules/cjs/loader:1096:12)
+    at Module.require (node:internal/modules/cjs/loader:1298:19)
+    at mod.require (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:182:18)
+    at requirePage (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/require.js:109:84)
+    at /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/load-components.js:103:84
+    at async loadComponentsImpl (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/load-components.js:103:26)
+    at async DevServer.findPageComponentsImpl (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/next-server.js:714:36)
+    at async DevServer.findPageComponents (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderPageComponent (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/base-server.js:1910:24)
+    at async DevServer.renderToResponseImpl (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/base-server.js:818:17)
+    at async /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async handleRequest (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/lib/router-server.js:359:24)
+    at async requestHandlerImpl (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/lib/router-server.js:383:13)
+    at async Server.requestListener (/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  page: '/api/news/twitter'
+}
+ GET /api/news/twitter 500 in 16ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/vendor-chunks'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/@swc' in /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server for build dependencies doesn't lead to expected result '/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/vendor-chunks/@swc.js', but to 'Error: Can't resolve './vendor-chunks/@swc' in '/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/@swc (expected /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/vendor-chunks/@swc.js)
+<w>  at file dependencies /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/webpack-runtime.js
+<w>  at file /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/webpack-runtime.js
+<w>  at file dependencies /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/pages/_error.js
+<w>  at file /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/pages/_error.js
+<w>  at file dependencies /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/require.js
+<w>  at file /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/build/utils.js
+<w>  at file /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/next' in /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server for build dependencies doesn't lead to expected result '/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/vendor-chunks/next.js', but to 'Error: Can't resolve './vendor-chunks/next' in '/Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/next (expected /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/vendor-chunks/next.js)
+<w>  at file dependencies /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/webpack-runtime.js
+<w>  at file /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/webpack-runtime.js
+<w>  at file dependencies /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/pages/_error.js
+<w>  at file /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/.next/server/pages/_error.js
+<w>  at file dependencies /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/require.js
+<w>  at file /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/build/utils.js
+<w>  at file /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/tushershikder/Desktop/Myapps/rwa/v5/proj_web/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+[?25h
