@@ -1,12 +1,27 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { supabase } from '@/lib/supabase';
 
 export async function GET() {
   try {
-    const whitelistPath = path.join(process.cwd(), 'src/data/whitelist.json');
-    const whitelistData = fs.readFileSync(whitelistPath, 'utf8');
-    const whitelist = JSON.parse(whitelistData);
+    const { data: addresses, error } = await supabase
+      .from('whitelisted_addresses')
+      .select('address')
+      .order('added_at', { ascending: false });
+
+    if (error) {
+      console.error('Error loading whitelist from Supabase:', error);
+      return NextResponse.json(
+        { error: 'Failed to load whitelist' }, 
+        { status: 500 }
+      );
+    }
+
+    // Format response to match existing structure
+    const whitelist = {
+      whitelistedAddresses: addresses?.map(item => item.address) || [],
+      lastUpdated: new Date().toISOString(),
+      version: '1.0.0'
+    };
     
     console.log('📋 API: Serving whitelist with', whitelist.whitelistedAddresses.length, 'addresses');
     

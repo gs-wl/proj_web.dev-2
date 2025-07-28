@@ -1,32 +1,22 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { supabase } from '@/lib/supabase';
 
-interface WhitelistRequest {
-  id: string;
+interface WhitelistRequestInput {
   walletAddress: string;
   name: string;
   email: string;
-  company: string;
+  company?: string;
   reason: string;
-  defiExperience: string;
-  submittedAt: string;
-  status: 'pending' | 'approved' | 'rejected';
-}
-
-interface WhitelistRequestsData {
-  requests: WhitelistRequest[];
-  lastUpdated: string;
-  version: string;
+  experience?: string;
 }
 
 function generateRequestId(): string {
-  return 'req_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+  return 'req_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 7);
 }
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const body: WhitelistRequestInput = await request.json();
     const { walletAddress, name, email, company, reason, experience } = body;
 
     // Validate required fields
@@ -45,26 +35,20 @@ export async function POST(request: Request) {
       );
     }
 
-    // Load existing requests
-    const requestsPath = path.join(process.cwd(), 'src/data/whitelist-requests.json');
-    let requestsData: WhitelistRequestsData;
-    
-    try {
-      const fileContent = fs.readFileSync(requestsPath, 'utf8');
-      requestsData = JSON.parse(fileContent);
-    } catch (error) {
-      // If file doesn't exist, create initial structure
-      requestsData = {
-        requests: [],
-        lastUpdated: new Date().toISOString(),
-        version: '1.0.0'
-      };
-    }
+    // Check if wallet address already has a request
+    const { data: existingRequest, error: checkError } = await supabase
+      .from('whitelist_requests')
+      .select('id, status')
+      .eq('wallet_address', walletAddress.toLowerCase())
+      .single();
 
-    // Check if wallet address already has a pending or approved request
-    const existingRequest = requestsData.requests.find(
-      req => req.walletAddress.toLowerCase() === walletAddress.toLowerCase()
-    );
+    if (checkError && checkError.code !== 'PGRST116') { // PGRST116 = no rows found
+      console.error('Error checking existing request:', checkError);
+      return NextResponse.json(
+        { error: 'Failed to check existing requests' },
+        { status: 500 }
+      );
+    }
 
     if (existingRequest) {
       if (existingRequest.status === 'pending') {
@@ -81,32 +65,60 @@ export async function POST(request: Request) {
       }
     }
 
+    // Check if address is already whitelisted
+    const { data: whitelistedAddress, error: whitelistError } = await supabase
+      .from('whitelisted_addresses')
+      .select('id')
+      .eq('address', walletAddress.toLowerCase())
+      .single();
+
+    if (whitelistError && whitelistError.code !== 'PGRST116') {
+      console.error('Error checking whitelist:', whitelistError);
+      return NextResponse.json(
+        { error: 'Failed to check whitelist status' },
+        { status: 500 }
+      );
+    }
+
+    if (whitelistedAddress) {
+      return NextResponse.json(
+        { error: 'This wallet address is already whitelisted' },
+        { status: 409 }
+      );
+    }
+
     // Create new request
-    const newRequest: WhitelistRequest = {
-      id: generateRequestId(),
-      walletAddress,
-      name,
-      email,
-      company: company || '',
-      reason,
-      defiExperience: experience || '',
-      submittedAt: new Date().toISOString(),
-      status: 'pending'
-    };
+    const requestId = generateRequestId();
+    const { data: newRequest, error: insertError } = await supabase
+      .from('whitelist_requests')
+      .insert({
+        id: requestId,
+        wallet_address: walletAddress.toLowerCase(),
+        name,
+        email,
+        company: company || null,
+        reason,
+        defi_experience: experience || null,
+        submitted_at: new Date().toISOString(),
+        status: 'pending'
+      })
+      .select()
+      .single();
 
-    // Add to requests array
-    requestsData.requests.push(newRequest);
-    requestsData.lastUpdated = new Date().toISOString();
+    if (insertError) {
+      console.error('Error inserting whitelist request:', insertError);
+      return NextResponse.json(
+        { error: 'Failed to submit request' },
+        { status: 500 }
+      );
+    }
 
-    // Save updated requests
-    fs.writeFileSync(requestsPath, JSON.stringify(requestsData, null, 2));
-
-    console.log(`✅ New whitelist request submitted: ${newRequest.id} for ${walletAddress}`);
+    console.log(`✅ New whitelist request submitted: ${requestId} for ${walletAddress}`);
 
     return NextResponse.json({
       success: true,
       message: 'Whitelist request submitted successfully',
-      requestId: newRequest.id
+      requestId: requestId
     });
 
   } catch (error) {

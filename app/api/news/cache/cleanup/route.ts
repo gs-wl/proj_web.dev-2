@@ -1,12 +1,10 @@
-import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-import { cleanupExpiredCache, CACHE_FILE_PATH, type CachedNewsData } from '../../../../../utils/newsCache';
+import { NextRequest, NextResponse } from 'next/server';
+import { cleanupExpiredCache, getCachedNewsData } from '@/utils/newsCache';
 
 // POST - Manual cleanup trigger
 export async function POST() {
   try {
-    const result = cleanupExpiredCache();
+    const result = await cleanupExpiredCache();
     
     return NextResponse.json({
       success: true,
@@ -17,41 +15,32 @@ export async function POST() {
     return NextResponse.json({
       success: false,
       cleaned: false,
-      message: 'Error in cleanup endpoint'
-    }, { status: 500 });
+      message: 'Error during cleanup'
+    });
   }
 }
 
-// GET - Check cache status and cleanup if needed
+// GET - Check cleanup status and current cache info
 export async function GET() {
   try {
-    const result = cleanupExpiredCache();
-    
-    // Also provide cache status information
-    let cacheStatus = 'No cache file';
-    let cacheAge = 0;
-    
-    if (fs.existsSync(CACHE_FILE_PATH)) {
-      const fileContent = fs.readFileSync(CACHE_FILE_PATH, 'utf8');
-      const cachedData: CachedNewsData = JSON.parse(fileContent);
-      
-      if (cachedData.lastUpdated) {
-        cacheAge = Date.now() - new Date(cachedData.lastUpdated).getTime();
-        cacheStatus = `Cache age: ${Math.round(cacheAge / (60 * 60 * 1000))} hours`;
-      }
-    }
+    const cleanupResult = await cleanupExpiredCache();
+    const cacheResult = await getCachedNewsData();
     
     return NextResponse.json({
       success: true,
-      ...result,
-      cacheStatus,
-      cacheAgeHours: Math.round(cacheAge / (60 * 60 * 1000))
+      ...cleanupResult,
+      cacheExists: cacheResult.success,
+      cacheData: cacheResult.success ? {
+        lastUpdated: cacheResult.data?.lastUpdated,
+        twitterPostsCount: cacheResult.data?.twitterPosts?.length || 0,
+        aiNewsCount: cacheResult.data?.aiNews?.length || 0
+      } : null
     });
   } catch (error) {
     console.error('Error in cleanup status endpoint:', error);
     return NextResponse.json({
       success: false,
       message: 'Error checking cleanup status'
-    }, { status: 500 });
+    });
   }
 }

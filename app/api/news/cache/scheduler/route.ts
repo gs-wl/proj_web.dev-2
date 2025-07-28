@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import cacheCleanupScheduler from '../../../../../utils/cacheCleanup';
+import cacheCleanupScheduler from '@/utils/cacheCleanup';
 
 // GET - Get scheduler status
 export async function GET() {

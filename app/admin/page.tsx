@@ -24,7 +24,7 @@ import { CacheCleanupAdmin } from '@/components/cache-cleanup-admin';
 
 interface WhitelistRequest {
   id: string;
-  walletAddress: string;
+  walletAddress?: string;
   name: string;
   email: string;
   company: string;
@@ -59,6 +59,7 @@ function AdminDashboard() {
       const response = await fetch('/api/whitelist-requests');
       if (response.ok) {
         const data: WhitelistRequestsData = await response.json();
+        console.log('📋 Admin: Loaded requests data:', data);
         setRequests(data.requests);
         
         // Calculate stats
@@ -68,6 +69,8 @@ function AdminDashboard() {
         const rejected = data.requests.filter(req => req.status === 'rejected').length;
         
         setStats({ total, pending, approved, rejected });
+      } else {
+        console.error('Failed to load requests:', response.status, response.statusText);
       }
     } catch (error) {
       console.error('Error loading requests:', error);
@@ -80,9 +83,16 @@ function AdminDashboard() {
     loadRequests();
   }, []);
 
-  const handleApprove = async (requestId: string, walletAddress: string) => {
+  const handleApprove = async (requestId: string, walletAddress?: string) => {
+    if (!walletAddress) {
+      console.error('Cannot approve request without wallet address');
+      return;
+    }
+    
     try {
       setProcessingId(requestId);
+      console.log('🔄 Approving request:', requestId, 'for wallet:', walletAddress);
+      
       const response = await fetch('/api/whitelist-requests', {
         method: 'POST',
         headers: {
@@ -95,10 +105,13 @@ function AdminDashboard() {
         })
       });
       
+      const result = await response.json();
+      console.log('✅ Approve response:', result);
+      
       if (response.ok) {
         await loadRequests(); // Reload the data
       } else {
-        console.error('Failed to approve request');
+        console.error('Failed to approve request:', result);
       }
     } catch (error) {
       console.error('Error approving request:', error);
@@ -110,6 +123,8 @@ function AdminDashboard() {
   const handleReject = async (requestId: string) => {
     try {
       setProcessingId(requestId);
+      console.log('🔄 Rejecting request:', requestId);
+      
       const response = await fetch('/api/whitelist-requests', {
         method: 'POST',
         headers: {
@@ -121,10 +136,13 @@ function AdminDashboard() {
         })
       });
       
+      const result = await response.json();
+      console.log('❌ Reject response:', result);
+      
       if (response.ok) {
         await loadRequests(); // Reload the data
       } else {
-        console.error('Failed to reject request');
+        console.error('Failed to reject request:', result);
       }
     } catch (error) {
       console.error('Error rejecting request:', error);
@@ -161,7 +179,12 @@ function AdminDashboard() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    if (!dateString) return 'N/A';
+    
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Invalid Date';
+    
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -324,7 +347,7 @@ function AdminDashboard() {
                             <div className="flex items-center gap-1">
                               <Wallet className="h-3 w-3 text-gray-400" />
                               <span className="font-mono text-sm text-gray-900 dark:text-gray-300">
-                                {request.walletAddress.slice(0, 6)}...{request.walletAddress.slice(-4)}
+                                {request.walletAddress ? `${request.walletAddress.slice(0, 6)}...${request.walletAddress.slice(-4)}` : 'N/A'}
                               </span>
                             </div>
                           </td>
@@ -349,8 +372,8 @@ function AdminDashboard() {
                                 <Button
                                   size="sm"
                                   onClick={() => handleApprove(request.id, request.walletAddress)}
-                                  disabled={processingId === request.id}
-                                  className="bg-green-600 hover:bg-green-700 text-white"
+                                  disabled={processingId === request.id || !request.walletAddress}
+                                  className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50"
                                 >
                                   <CheckCircle className="h-3 w-3 mr-1" />
                                   Approve
@@ -405,7 +428,7 @@ function AdminDashboard() {
                         <div className="flex items-center gap-1">
                           <Wallet className="h-3 w-3 text-gray-400" />
                           <span className="font-mono text-xs text-gray-900 dark:text-gray-300">
-                            {request.walletAddress.slice(0, 8)}...{request.walletAddress.slice(-6)}
+                            {request.walletAddress ? `${request.walletAddress.slice(0, 8)}...${request.walletAddress.slice(-6)}` : 'N/A'}
                           </span>
                         </div>
                         
@@ -423,8 +446,8 @@ function AdminDashboard() {
                           <Button
                             size="sm"
                             onClick={() => handleApprove(request.id, request.walletAddress)}
-                            disabled={processingId === request.id}
-                            className="bg-green-600 hover:bg-green-700 text-white flex-1"
+                            disabled={processingId === request.id || !request.walletAddress}
+                            className="bg-green-600 hover:bg-green-700 text-white flex-1 disabled:opacity-50"
                           >
                             <CheckCircle className="h-3 w-3 mr-1" />
                             Approve
