@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 const CACHE_EXPIRY_HOURS = 24;
 const CACHE_KEY = 'main_news_cache';
@@ -13,6 +13,7 @@ interface CachedNewsData {
 // Function to get cached news data
 export async function getCachedNewsData(): Promise<{ success: boolean; data?: CachedNewsData; message?: string }> {
   try {
+    const supabase = getSupabase();
     const { data: cacheData, error } = await supabase
       .from('news_cache')
       .select('*')
@@ -56,6 +57,7 @@ export async function getCachedNewsData(): Promise<{ success: boolean; data?: Ca
 // Function to save news data to cache
 export async function saveCachedNewsData(twitterPosts: any[], aiNews: any[]): Promise<{ success: boolean; message: string }> {
   try {
+    const supabase = getSupabase();
     const now = new Date();
     const expiresAt = new Date(now.getTime() + (CACHE_EXPIRY_HOURS * 60 * 60 * 1000));
 
@@ -96,6 +98,7 @@ export async function saveCachedNewsData(twitterPosts: any[], aiNews: any[]): Pr
 // Function to clear cache
 export async function clearCachedNewsData(): Promise<{ success: boolean; message: string }> {
   try {
+    const supabase = getSupabase();
     const { error } = await supabase
       .from('news_cache')
       .delete()
@@ -125,6 +128,7 @@ export async function clearCachedNewsData(): Promise<{ success: boolean; message
 // Function to check and clean expired cache
 export async function cleanupExpiredCache(): Promise<{ cleaned: boolean; message: string }> {
   try {
+    const supabase = getSupabase();
     const { data: expiredCache, error: selectError } = await supabase
       .from('news_cache')
       .select('id, cache_key, expires_at')

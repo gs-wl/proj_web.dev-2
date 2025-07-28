@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 export async function GET() {
   try {
+    const supabase = getSupabase();
     const { data: requests, error } = await supabase
       .from('whitelist_requests')
       .select('*')
@@ -56,6 +57,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const supabase = getSupabase();
     const body = await request.json();
     const { action, requestId, walletAddress } = body;
 

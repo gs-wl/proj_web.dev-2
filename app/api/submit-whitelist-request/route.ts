@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 interface WhitelistRequestInput {
   walletAddress: string;
@@ -16,6 +16,7 @@ function generateRequestId(): string {
 
 export async function POST(request: Request) {
   try {
+    const supabase = getSupabase();
     const body: WhitelistRequestInput = await request.json();
     const { walletAddress, name, email, company, reason, experience } = body;
 
