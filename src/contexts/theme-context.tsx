@@ -13,20 +13,23 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>('dark');
 
   useEffect(() => {
-    // Check for saved theme preference or default to 'light'
+    // Check for saved theme preference or default to 'dark'
     const savedTheme = localStorage.getItem('portfolio-theme') as Theme;
     if (savedTheme) {
       setTheme(savedTheme);
+    } else {
+      // Set dark as default if no preference is saved
+      setTheme('dark');
     }
   }, []);
 
   useEffect(() => {
     // Save theme preference
     localStorage.setItem('portfolio-theme', theme);
-    
+
     // Apply theme to document
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');

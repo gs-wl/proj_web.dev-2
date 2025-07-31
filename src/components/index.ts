@@ -47,20 +47,6 @@ export { default as NewsPage } from './news-page';
 // MODAL COMPONENTS
 // =============================================================================
 
-/**
- * Modal for activating staking on specific tokens
- */
-export { default as StakingActivationModal } from './staking-activation-modal';
-
-/**
- * Modal for claiming accumulated staking rewards
- */
-export { default as ClaimRewardsModal } from './claim-rewards-modal';
-
-/**
- * Modal for unstaking tokens and withdrawing principal
- */
-export { default as UnstakeModal } from './unstake-modal';
 
 /**
  * Web3-enabled claim modal with blockchain integration
@@ -202,9 +188,6 @@ export type {
  * All modal components grouped for convenience
  */
 export const Modals = {
-  StakingActivation: require('./staking-activation-modal').default,
-  ClaimRewards: require('./claim-rewards-modal').default,
-  Unstake: require('./unstake-modal').default,
   Web3Claim: require('./web3-claim-modal').Web3ClaimModal,
   Web3Staking: require('./web3-staking-modal').Web3StakingModal,
   Web3Unstake: require('./web3-unstake-modal').Web3UnstakeModal,
@@ -251,13 +234,7 @@ export const Wallet = {
  * ```typescript
  * import { Button, Card } from '@/components';
  * ```
- * 
- * @example Modal group import
- * ```typescript
- * import { Modals } from '@/components';
- * const StakingModal = Modals.StakingActivation;
- * ```
- * 
+ *
  * @example Guard usage
  * ```typescript
  * import { Guards } from '@/components';

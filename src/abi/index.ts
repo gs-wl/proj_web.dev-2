@@ -1,18 +1,18 @@
 // Contract ABI exports for the RWA DeFi Platform
 
 // Staking contracts
-import StakingContractABI from './staking/StakingContract.json';
+import StakingABI from './staking/Staking.json';
 
 // Token contracts
-import ERC20TokenABI from './tokens/ERC20Token.json';
+import RwaTokenABI from './tokens/RwaToken.json';
 
 // Export all ABIs
 export const ABIS = {
   // Staking
-  StakingContract: StakingContractABI,
+  Staking: StakingABI,
   
   // Tokens
-  ERC20Token: ERC20TokenABI,
+  RwaToken: RwaTokenABI,
 } as const;
 
 // Type-safe ABI access
@@ -25,6 +25,6 @@ export function getABI(name: ABIName) {
 
 // Re-export individual ABIs for direct imports
 export {
-  StakingContractABI,
-  ERC20TokenABI,
+  StakingABI,
+  RwaTokenABI,
 };
