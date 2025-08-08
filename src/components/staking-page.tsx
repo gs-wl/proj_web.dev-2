@@ -28,6 +28,7 @@ import {
   contractAddresses
 } from '@/hooks/useContracts';
 import { useAggregatedUserStakes } from '@/hooks/useStakesData';
+import Image from 'next/image';
 import { useStakesPreferences, useAutoRefresh } from '@/hooks/useStakesPreferences';
 import { useUserRewards } from '@/hooks/useRewardsData';
 import { RewardsRow } from '@/components/rewards/RewardsRow';
@@ -167,7 +168,7 @@ const StakingPage = () => {
       totalStaked: Number(pool.totalStaked || 0n) / 1e18,
       lockPeriod: Number(pool.lockPeriod || 0n),
       status: pool.isActive ? 'active' as const : 'inactive' as const,
-      logo: '/rwa.svg',
+      logo: '/logo/logo.png',
       color: 'from-green-500 to-emerald-600'
     }));
   }, [allPools.data]);
@@ -346,7 +347,16 @@ const StakingPage = () => {
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
       <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">RWA Staking</h1>
+        <div className="flex items-center gap-3">
+          <Image
+            src="/logo/logo.png"
+            alt="W3-Energy Logo"
+            width={80}
+            height={70}
+            className="h-18 w-20"
+          />
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Staking</h1>
+        </div>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
           {isConnected && (
             <>
@@ -393,7 +403,7 @@ const StakingPage = () => {
                 Wrong Network
               </h3>
               <p className="text-sm text-yellow-700 dark:text-yellow-300">
-                Please switch to {isSupportedChain(currentNetwork.chainId) ? getNetworkConfig(currentNetwork.chainId).chainName : 'the correct network'} to use RWA staking features.
+                Please switch to {isSupportedChain(currentNetwork.chainId) ? getNetworkConfig(currentNetwork.chainId).chainName : 'the correct network'} to use staking features.
               </p>
             </div>
             <button

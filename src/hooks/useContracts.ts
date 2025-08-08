@@ -305,7 +305,7 @@ export const useAllUserStakes = (userAddress?: string) => {
       startDate: new Date().toISOString().split('T')[0],
       endDate: new Date(Date.now() + 86400000).toISOString().split('T')[0],
       status: 'active' as const,
-      logo: '/rwa.svg',
+      logo: '/logo/logo.png',
       color: 'from-green-500 to-emerald-600',
       lockPeriod: 86400,
       isLocked: true,

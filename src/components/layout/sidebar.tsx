@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, Network } from 'lucide-react';
+import Image from 'next/image';
 
 interface MenuItem {
   id: string;
@@ -26,11 +27,17 @@ export const Sidebar = ({ sidebarOpen, setSidebarOpen, activeTab, setActiveTab, 
   <aside className={`fixed left-0 top-0 h-full w-80 bg-white dark:bg-gray-900 shadow-xl z-50 transform transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:relative lg:translate-x-0 lg:shadow-none lg:border-r lg:border-gray-200 dark:lg:border-gray-800`}>
     <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-2 rounded-lg">
-          <Network className="w-6 h-6 text-white" />
+        <div className="p-1 rounded-lg">
+          <Image
+            src="/logo/logo.png"
+            alt="W3-Energy Logo"
+            width={72}
+            height={56}
+            className="h-16 w-18"
+          />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">RWA.defi</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">W3-Energy</h1>
           <p className="text-xs text-gray-500 dark:text-gray-400">Real World Assets</p>
         </div>
       </div>

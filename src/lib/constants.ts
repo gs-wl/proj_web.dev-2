@@ -1,6 +1,6 @@
 // App Configuration
 export const APP_CONFIG = {
-  name: 'RWA.defi',
+  name: 'W3-Energy',
   description: 'Real World Assets DeFi Platform',
   url: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
   version: '1.0.0',

@@ -21,6 +21,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CacheCleanupAdmin } from '@/components/cache-cleanup-admin';
+import Image from 'next/image';
 
 interface WhitelistRequest {
   id: string;
@@ -201,6 +202,13 @@ function AdminDashboard() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
               <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                <Image 
+                  src="/logo/logo.png" 
+                  alt="W3-Energy Logo" 
+                  width={80} 
+                  height={70} 
+                  className="h-16 w-18 lg:h-18 lg:w-20"
+                />
                 <Shield className="h-6 w-6 lg:h-8 lg:w-8 text-green-600" />
                 Admin Dashboard
               </h1>

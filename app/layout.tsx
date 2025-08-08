@@ -17,20 +17,22 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'RWA.defi - Real World Assets DeFi Platform',
+  title: 'W3-Energy - Real World Assets DeFi Platform',
   description: 'Trade, stake, and invest in tokenized real-world assets including renewable energy, carbon credits, and green bonds.',
   keywords: 'RWA, DeFi, Real World Assets, Tokenization, Renewable Energy, Carbon Credits, Green Finance',
-  authors: [{ name: 'RWA.defi Team' }],
+  authors: [{ name: 'W3-Energy Team' }],
   openGraph: {
-    title: 'RWA.defi - Real World Assets DeFi Platform',
+    title: 'W3-Energy - Real World Assets DeFi Platform',
     description: 'Trade, stake, and invest in tokenized real-world assets',
     type: 'website',
     locale: 'en_US',
+    images: ['/logo/logo.png'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'RWA.defi - Real World Assets DeFi Platform',
+    title: 'W3-Energy - Real World Assets DeFi Platform',
     description: 'Trade, stake, and invest in tokenized real-world assets',
+    images: ['/logo/logo.png'],
   },
 }
 
@@ -43,6 +45,7 @@ export default function RootLayout({
     <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/logo/favicon.png" />
       </head>
       <body className={`${inter.className} antialiased`} suppressHydrationWarning>
         <ThemeProvider>

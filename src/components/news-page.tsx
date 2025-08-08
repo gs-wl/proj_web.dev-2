@@ -244,7 +244,7 @@ const NewsPage = ({ defaultTab = 'all', showTrending = false, className = '' }: 
       <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">News & Updates</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">Latest updates from RWA.defi and AI-powered market insights</p>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Latest updates from W3-Energy and AI-powered market insights</p>
         </div>
         <div className="flex items-center gap-2">
           {/* Notification indicator */}

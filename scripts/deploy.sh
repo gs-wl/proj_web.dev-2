@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# RWA.defi Deployment Script
+# W3-Energy Deployment Script
 # This script builds and deploys the application
 
 set -e
 
-echo "🚀 Starting RWA.defi deployment..."
+echo "🚀 Starting W3-Energy deployment..."
 
 # Check if we're in the right directory
 if [ ! -f "package.json" ]; then

@@ -1,6 +1,8 @@
-# RWA.defi - Real World Assets DeFi Platform
+# W3-Energy - Real World Assets DeFi Platform
 
-A modern, responsive DeFi platform for trading, staking, and investing in tokenized real-world assets including renewable energy projects, carbon credits, and green bonds.
+A modern, responsive DeFi platform for trading, staking, and investing in
+tokenized real-world assets including renewable energy projects, carbon credits,
+and green bonds.
 
 ## 🌟 Features
 
@@ -23,12 +25,14 @@ A modern, responsive DeFi platform for trading, staking, and investing in tokeni
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <your-repo-url>
 cd rwa-defi-platform
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 # or
@@ -38,6 +42,7 @@ pnpm install
 ```
 
 3. Run the development server:
+
 ```bash
 npm run dev
 # or
@@ -100,6 +105,7 @@ The platform supports three built-in themes:
 ### Tailwind CSS
 
 The project uses a custom Tailwind configuration with:
+
 - Extended color palette for primary/secondary themes
 - Custom animations and keyframes
 - Form plugin integration
@@ -108,6 +114,7 @@ The project uses a custom Tailwind configuration with:
 ### TypeScript
 
 Configured with strict mode and path aliases:
+
 - `@/*` → `./src/*`
 - `@/components/*` → `./src/components/*`
 - `@/lib/*` → `./src/lib/*`
@@ -123,6 +130,7 @@ Configured with strict mode and path aliases:
 ### Other Platforms
 
 The project can be deployed to any platform that supports Next.js:
+
 - Netlify
 - Railway
 - DigitalOcean App Platform
@@ -166,7 +174,8 @@ The project can be deployed to any platform that supports Next.js:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
+for details.
 
 ## 🙏 Acknowledgments
 
@@ -177,7 +186,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-For support, email support@rwa.defi or join our Discord community.
+For support, email support@w3-energy.org or join our Discord community.
 
 ---
 

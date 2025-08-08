@@ -8,11 +8,11 @@ import { useAdmin } from '@/hooks/useAdmin';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  Leaf, 
-  Zap, 
-  Shield, 
-  TrendingUp, 
-  Globe, 
+  Leaf,
+  Zap,
+  Shield,
+  TrendingUp,
+  Globe,
   Award,
   ChevronRight,
   PlayCircle,
@@ -36,6 +36,7 @@ import {
   Activity
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export function Homepage() {
   const router = useRouter();
@@ -51,7 +52,7 @@ export function Homepage() {
     console.log('  - isConnected:', isConnected);
     console.log('  - isLoading:', isLoading);
     console.log('  - isWhitelisted:', isWhitelisted);
-    
+
     if (isConnected && !isLoading && isWhitelisted === false) {
       console.log('  - ❌ User is NOT whitelisted - staying on homepage');
     } else if (isConnected && !isLoading && isWhitelisted === true) {
@@ -247,13 +248,19 @@ export function Homepage() {
     <div className="min-h-screen bg-white pb-20 md:pb-0">
       {/* Navigation */}
       <nav className="bg-white/95 backdrop-blur-sm border-b border-green-100 sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Leaf className="h-8 w-8 text-green-600" />
-              <span className="text-2xl font-bold text-gray-900">RWA.defi</span>
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <Image
+                src="/logo/logo.png"
+                alt="W3-Energy Logo"
+                width={72}
+                height={64}
+                className="h-14 w-16 sm:h-16 sm:w-18 md:h-18 md:w-20"
+              />
+              <span className="hidden sm:block text-lg sm:text-xl md:text-2xl font-bold text-gray-900">W3-Energy</span>
             </div>
-            
+
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
               <a href="#features" className="text-gray-600 hover:text-green-600 transition-colors">Features</a>
@@ -261,7 +268,7 @@ export function Homepage() {
               <a href="#roadmap" className="text-gray-600 hover:text-green-600 transition-colors">Roadmap</a>
               <a href="#team" className="text-gray-600 hover:text-green-600 transition-colors">Team</a>
               {isConnected && isAdmin && (
-                <button 
+                <button
                   onClick={() => router.push('/admin')}
                   className="text-gray-600 hover:text-green-600 transition-colors font-medium"
                 >
@@ -276,14 +283,14 @@ export function Homepage() {
               {isConnected && !isLoading && (
                 <>
                   {isWhitelisted ? (
-                    <Button 
+                    <Button
                       className="bg-green-600 hover:bg-green-700 text-white"
                       onClick={() => router.push('/app')}
                     >
-                      Launch App
+                      App
                     </Button>
                   ) : (
-                    <Button 
+                    <Button
                       variant="outline"
                       className="border-green-600 text-green-600 hover:bg-green-50"
                       onClick={() => router.push('/waitlist')}
@@ -301,15 +308,15 @@ export function Homepage() {
               {isConnected && !isLoading && (
                 <>
                   {isWhitelisted ? (
-                    <Button 
+                    <Button
                       size="sm"
                       className="bg-green-600 hover:bg-green-700 text-white"
                       onClick={() => router.push('/app')}
                     >
-                      Launch App
+                      App
                     </Button>
                   ) : (
-                    <Button 
+                    <Button
                       size="sm"
                       variant="outline"
                       className="border-green-600 text-green-600 hover:bg-green-50"
@@ -340,7 +347,7 @@ export function Homepage() {
               <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-10">
                 {heroSlides[currentSlide].subtitle}
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
                 <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg">
                   <PlayCircle className="h-5 w-5 mr-2" />
@@ -367,16 +374,15 @@ export function Homepage() {
             </div>
           </div>
         </div>
-        
+
         {/* Slide indicators */}
         <div className="flex justify-center space-x-2 mt-8">
           {heroSlides.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full transition-colors ${
-                currentSlide === index ? 'bg-green-600' : 'bg-green-200'
-              }`}
+              className={`w-3 h-3 rounded-full transition-colors ${currentSlide === index ? 'bg-green-600' : 'bg-green-200'
+                }`}
             />
           ))}
         </div>
@@ -387,7 +393,7 @@ export function Homepage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Why Choose RWA.defi?
+              Why Choose W3-Energy?
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               The first DeFi platform dedicated to sustainable investing with real environmental impact
@@ -507,15 +513,14 @@ export function Homepage() {
             {roadmapItems.map((item, index) => (
               <div key={index} className="flex items-start mb-12 last:mb-0">
                 <div className="flex-shrink-0 mr-6">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                    item.status === 'completed' ? 'bg-green-600' :
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${item.status === 'completed' ? 'bg-green-600' :
                     item.status === 'current' ? 'bg-blue-600' :
-                    item.status === 'upcoming' ? 'bg-yellow-500' :
-                    'bg-gray-400'
-                  } text-white`}>
+                      item.status === 'upcoming' ? 'bg-yellow-500' :
+                        'bg-gray-400'
+                    } text-white`}>
                     {item.status === 'completed' ? <CheckCircle className="h-6 w-6" /> :
-                     item.status === 'current' ? <Activity className="h-6 w-6" /> :
-                     <Target className="h-6 w-6" />}
+                      item.status === 'current' ? <Activity className="h-6 w-6" /> :
+                        <Target className="h-6 w-6" />}
                   </div>
                   {index < roadmapItems.length - 1 && (
                     <div className="w-0.5 h-16 bg-green-200 mx-auto mt-4"></div>
@@ -526,12 +531,11 @@ export function Homepage() {
                     <span className="text-sm font-semibold text-green-600 bg-green-100 px-3 py-1 rounded-full mr-3">
                       {item.quarter}
                     </span>
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      item.status === 'completed' ? 'bg-green-100 text-green-800' :
+                    <span className={`text-xs px-2 py-1 rounded-full ${item.status === 'completed' ? 'bg-green-100 text-green-800' :
                       item.status === 'current' ? 'bg-blue-100 text-blue-800' :
-                      item.status === 'upcoming' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
+                        item.status === 'upcoming' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-gray-100 text-gray-800'
+                      }`}>
                       {item.status}
                     </span>
                   </div>
@@ -701,22 +705,22 @@ export function Homepage() {
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
             Join thousands of investors who are making a positive impact while earning sustainable returns
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             {!isConnected ? (
               <ConnectButton />
             ) : isWhitelisted ? (
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="bg-white text-green-600 hover:bg-gray-100 px-8 py-4"
                 onClick={() => router.push('/app')}
               >
-                Launch App
+                App
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Button>
             ) : (
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="bg-white text-green-600 hover:bg-gray-100 px-8 py-4"
                 onClick={() => router.push('/waitlist')}
               >
@@ -737,8 +741,14 @@ export function Homepage() {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-3 mb-6">
-                <Leaf className="h-8 w-8 text-green-400" />
-                <span className="text-2xl font-bold">RWA.defi</span>
+                <Image
+                  src="/logo/logo.png"
+                  alt="W3-Energy Logo"
+                  width={96}
+                  height={84}
+                  className="h-12 w-12"
+                />
+                <span className="text-2xl font-bold">W3-Energy</span>
               </div>
               <p className="text-gray-400 mb-6">
                 Building the future of sustainable finance through blockchain technology and real-world asset tokenization.
@@ -783,7 +793,7 @@ export function Homepage() {
 
           <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              © 2024 RWA.defi. All rights reserved.
+              © 2024 W3-Energy. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</a>
@@ -797,8 +807,8 @@ export function Homepage() {
       {/* Bottom Navigation - Mobile Only */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden z-50">
         <div className="grid grid-cols-5 h-16">
-          <a 
-            href="#features" 
+          <a
+            href="#features"
             className="flex flex-col items-center justify-center space-y-1 text-gray-600 hover:text-green-600 transition-colors active:bg-gray-50"
             onClick={() => {
               document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
@@ -807,9 +817,9 @@ export function Homepage() {
             <Shield className="h-4 w-4" />
             <span className="text-xs font-medium">Features</span>
           </a>
-          
-          <a 
-            href="#assets" 
+
+          <a
+            href="#assets"
             className="flex flex-col items-center justify-center space-y-1 text-gray-600 hover:text-green-600 transition-colors active:bg-gray-50"
             onClick={() => {
               document.getElementById('assets')?.scrollIntoView({ behavior: 'smooth' });
@@ -818,9 +828,9 @@ export function Homepage() {
             <DollarSign className="h-4 w-4" />
             <span className="text-xs font-medium">Assets</span>
           </a>
-          
-          <a 
-            href="#roadmap" 
+
+          <a
+            href="#roadmap"
             className="flex flex-col items-center justify-center space-y-1 text-gray-600 hover:text-green-600 transition-colors active:bg-gray-50"
             onClick={() => {
               document.getElementById('roadmap')?.scrollIntoView({ behavior: 'smooth' });
@@ -829,9 +839,9 @@ export function Homepage() {
             <Target className="h-4 w-4" />
             <span className="text-xs font-medium">Roadmap</span>
           </a>
-          
-          <a 
-            href="#team" 
+
+          <a
+            href="#team"
             className="flex flex-col items-center justify-center space-y-1 text-gray-600 hover:text-green-600 transition-colors active:bg-gray-50"
             onClick={() => {
               document.getElementById('team')?.scrollIntoView({ behavior: 'smooth' });
@@ -840,9 +850,9 @@ export function Homepage() {
             <Users className="h-4 w-4" />
             <span className="text-xs font-medium">Team</span>
           </a>
-          
+
           {isConnected && isAdmin ? (
-            <button 
+            <button
               onClick={() => router.push('/admin')}
               className="flex flex-col items-center justify-center space-y-1 text-gray-600 hover:text-green-600 transition-colors active:bg-gray-50"
             >
@@ -850,8 +860,8 @@ export function Homepage() {
               <span className="text-xs font-medium">Admin</span>
             </button>
           ) : (
-            <a 
-              href="#" 
+            <a
+              href="#"
               className="flex flex-col items-center justify-center space-y-1 text-gray-400 cursor-not-allowed"
             >
               <Shield className="h-4 w-4" />

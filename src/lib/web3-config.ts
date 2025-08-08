@@ -2,7 +2,7 @@ import { getDefaultConfig } from '@rainbow-me/rainbowkit';
 import { sepolia } from 'wagmi/chains';
 
 export const config = getDefaultConfig({
-  appName: 'RWA.defi Platform',
+  appName: 'W3-Energy Platform',
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'your-project-id',
   chains: [sepolia],
   ssr: true, // If your dApp uses server side rendering (SSR)

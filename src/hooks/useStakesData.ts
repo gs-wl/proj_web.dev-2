@@ -61,7 +61,7 @@ export const useAggregatedUserStakes = (userAddress?: string): StakeDataHookResu
             status: 'locked' as const,
             totalClaimed: 0,
             timeRemaining: 86400,
-            logo: '/rwa.svg',
+            logo: '/logo/logo.png',
             color: 'from-green-500 to-emerald-600',
             
             // Raw contract data placeholders
@@ -166,7 +166,7 @@ export const useIndividualStakeData = (poolId: number, userAddress?: string) => 
       status,
       totalClaimed,
       timeRemaining,
-      logo: '/rwa.svg',
+      logo: '/logo/logo.png',
       color: 'from-green-500 to-emerald-600',
       
       // Raw contract data

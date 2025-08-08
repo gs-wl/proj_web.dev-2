@@ -154,7 +154,7 @@ function validateWhitelist() {
 
 function showHelp() {
   console.log(`
-🏠 RWA.defi Whitelist Management Tool
+🏠 W3-Energy Whitelist Management Tool
 
 Usage:
   node scripts/manage-whitelist.js <command> [address]

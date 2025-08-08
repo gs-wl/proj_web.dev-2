@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { WalletConnectButton } from './wallet-connect-button'
 import { useTheme } from '@/contexts/theme-context'
+import Image from 'next/image'
 
 // Portfolio data types
 interface PortfolioAsset {
@@ -318,6 +319,13 @@ export function PortfolioPage() {
               >
                 <Home className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
+              <Image 
+                src="/logo/logo.png" 
+                alt="W3-Energy Logo" 
+                width={72} 
+                height={64} 
+                className="h-16 w-18"
+              />
               <div>
                 <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">Portfolio</h1>
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 hidden sm:block">Manage your RWA investments</p>
