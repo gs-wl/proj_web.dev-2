@@ -270,10 +270,15 @@ const NewsPage = ({ defaultTab = 'all', showTrending = false, className = '' }: 
             <Zap className="w-4 h-4" />
             {loading ? (isManualRefresh ? 'Refreshing...' : 'Loading...') : 'Refresh'}
           </button>
-          <button className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all">
+          <a 
+            href="https://x.com/w3energy_org" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all"
+          >
             <Twitter className="w-4 h-4" />
             Follow Us
-          </button>
+          </a>
         </div>
       </header>
 
