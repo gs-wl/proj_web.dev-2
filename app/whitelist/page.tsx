@@ -15,19 +15,20 @@ export default function WhitelistPage() {
   const { address, isConnected } = useAccount();
   const router = useRouter();
   const [formData, setFormData] = useState({
-    name: '',
+    nickname: '',
     email: '',
-    company: '',
-    reason: '',
-    experience: '',
+    participateAirdrops: false,
+    joinCompetitions: false,
+    bugBountyInterest: false,
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
     }));
   };
 
@@ -43,11 +44,11 @@ export default function WhitelistPage() {
         },
         body: JSON.stringify({
           walletAddress: address,
-          name: formData.name,
+          nickname: formData.nickname,
           email: formData.email,
-          company: formData.company,
-          reason: formData.reason,
-          experience: formData.experience
+          participateAirdrops: formData.participateAirdrops,
+          joinCompetitions: formData.joinCompetitions,
+          bugBountyInterest: formData.bugBountyInterest
         })
       });
 
@@ -79,7 +80,7 @@ export default function WhitelistPage() {
                 Application Submitted Successfully!
               </h1>
               <p className="text-xl text-gray-600 mb-8">
-                Thank you for your interest in W3-Energy. We&apos;ve received your whitelist application.
+                Thank you for your interest in W3-Energy. You&apos;re now first in line for the future of energy!
               </p>
             </div>
 
@@ -151,11 +152,11 @@ export default function WhitelistPage() {
               <h1 className="text-4xl font-bold text-gray-900">W3-Energy</h1>
             </div>
             <h2 className="text-3xl font-bold text-gray-800 mb-4">
-              Join the Whitelist
+              Be first in line for the future of energy
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Our platform is currently in beta and access is limited to whitelisted wallets.
-              Apply below to get early access to sustainable DeFi investing.
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-6">
+              Our platform is currently in beta — access is limited to approved wallets only. 
+              Get whitelisted below to secure early access to the W3-Energy on-chain ecosystem.
             </p>
           </div>
 
@@ -191,52 +192,17 @@ export default function WhitelistPage() {
               </CardHeader>
               <CardContent className="p-8">
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-2">
-                        <User className="h-4 w-4" />
-                        <span>Full Name *</span>
-                      </label>
-                      <Input
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        required
-                        placeholder="Enter your full name"
-                        style={{ borderColor: '#41a290', backgroundColor: '#ffffff', color: '#13493f' }}
-                        onFocus={(e) => (e.target as HTMLInputElement).style.borderColor = '#13493f'}
-                        onBlur={(e) => (e.target as HTMLInputElement).style.borderColor = '#41a290'}
-                      />
-                    </div>
-
-                    <div>
-                      <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-2">
-                        <Mail className="h-4 w-4" />
-                        <span>Email Address *</span>
-                      </label>
-                      <Input
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        required
-                        placeholder="Enter your email"
-                        style={{ borderColor: '#41a290', backgroundColor: '#ffffff', color: '#13493f' }}
-                        onFocus={(e) => (e.target as HTMLInputElement).style.borderColor = '#13493f'}
-                        onBlur={(e) => (e.target as HTMLInputElement).style.borderColor = '#41a290'}
-                      />
-                    </div>
-                  </div>
-
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">
-                      Company/Organization (Optional)
+                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-2">
+                      <User className="h-4 w-4" />
+                      <span>Preferred Nickname or ENS Domain</span>
                     </label>
+                    <p className="text-xs text-gray-500 mb-2">Optional — use your Web3 identity or create an alias</p>
                     <Input
-                      name="company"
-                      value={formData.company}
+                      name="nickname"
+                      value={formData.nickname}
                       onChange={handleInputChange}
-                      placeholder="Enter your company or organization"
+                      placeholder="Enter your nickname, ENS domain, or alias"
                       style={{ borderColor: '#41a290', backgroundColor: '#ffffff', color: '#13493f' }}
                       onFocus={(e) => (e.target as HTMLInputElement).style.borderColor = '#13493f'}
                       onBlur={(e) => (e.target as HTMLInputElement).style.borderColor = '#41a290'}
@@ -244,47 +210,81 @@ export default function WhitelistPage() {
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">
-                      Why do you want to join? *
+                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-2">
+                      <Mail className="h-4 w-4" />
+                      <span>Email Address *</span>
                     </label>
-                    <Textarea
-                      name="reason"
-                      value={formData.reason}
+                    <p className="text-xs text-gray-500 mb-2">Must match the one you register with on the platform for early access</p>
+                    <Input
+                      name="email"
+                      type="email"
+                      value={formData.email}
                       onChange={handleInputChange}
                       required
-                      rows={4}
-                      placeholder="Tell us about your interest in sustainable investing and RWA tokens..."
+                      placeholder="Enter your email address"
                       style={{ borderColor: '#41a290', backgroundColor: '#ffffff', color: '#13493f' }}
-                      onFocus={(e) => (e.target as HTMLTextAreaElement).style.borderColor = '#13493f'}
-                      onBlur={(e) => (e.target as HTMLTextAreaElement).style.borderColor = '#41a290'}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">
-                      DeFi Experience
-                    </label>
-                    <Textarea
-                      name="experience"
-                      value={formData.experience}
-                      onChange={handleInputChange}
-                      rows={3}
-                      placeholder="Describe your experience with DeFi, staking, or cryptocurrency (optional)"
-                      style={{ borderColor: '#41a290', backgroundColor: '#ffffff', color: '#13493f' }}
-                      onFocus={(e) => (e.target as HTMLTextAreaElement).style.borderColor = '#13493f'}
-                      onBlur={(e) => (e.target as HTMLTextAreaElement).style.borderColor = '#41a290'}
+                      onFocus={(e) => (e.target as HTMLInputElement).style.borderColor = '#13493f'}
+                      onBlur={(e) => (e.target as HTMLInputElement).style.borderColor = '#41a290'}
                     />
                   </div>
 
                   <div className="p-6 rounded-lg" style={{ backgroundColor: '#f0fdfa' }}>
-                    <h3 className="font-semibold mb-3" style={{ color: '#13493f' }}>Platform Benefits</h3>
-                    <ul className="grid md:grid-cols-2 gap-2 text-sm" style={{ color: '#13493f' }}>
-                      <li>• Access to exclusive RWA tokens</li>
-                      <li>• Early investor advantages</li>
-                      <li>• Sustainable investment opportunities</li>
-                      <li>• Lower fees for beta users</li>
-                      <li>• Direct impact on climate projects</li>
-                      <li>• Community governance participation</li>
+                    <h3 className="font-semibold mb-4" style={{ color: '#13493f' }}>Early Participant Perks (Optional)</h3>
+                    <div className="space-y-3">
+                      <label className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          name="participateAirdrops"
+                          checked={formData.participateAirdrops}
+                          onChange={handleInputChange}
+                          className="w-4 h-4 rounded border-2"
+                          style={{ accentColor: '#13493f' }}
+                        />
+                        <span className="text-sm" style={{ color: '#13493f' }}>Yes, I'd like to participate in pre-launch/airdrops</span>
+                      </label>
+                      <label className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          name="joinCompetitions"
+                          checked={formData.joinCompetitions}
+                          onChange={handleInputChange}
+                          className="w-4 h-4 rounded border-2"
+                          style={{ accentColor: '#13493f' }}
+                        />
+                        <span className="text-sm" style={{ color: '#13493f' }}>Yes, I'd like to join competitions & referral challenges</span>
+                      </label>
+                      <label className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          name="bugBountyInterest"
+                          checked={formData.bugBountyInterest}
+                          onChange={handleInputChange}
+                          className="w-4 h-4 rounded border-2"
+                          style={{ accentColor: '#13493f' }}
+                        />
+                        <span className="text-sm" style={{ color: '#13493f' }}>Yes, I'm interested in the bug bounty program</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="p-6 rounded-lg" style={{ backgroundColor: '#f0fdfa' }}>
+                    <h3 className="font-semibold mb-4" style={{ color: '#13493f' }}>Platform Benefits</h3>
+                    <ul className="space-y-2 text-sm" style={{ color: '#13493f' }}>
+                      <li>• <strong>Exclusive Access to RWA Energy Tokens</strong> – Invest in tokenized clean energy assets before public launch.</li>
+                      <li>• <strong>Early Investor Advantages</strong> – Priority allocations, bonus rewards, and pre-sale pricing.</li>
+                      <li>• <strong>Sustainable Investment Opportunities</strong> – Back projects driving the global energy transition.</li>
+                      <li>• <strong>Reduced Fees for Beta Users</strong> – Enjoy discounted transaction and platform fees during beta.</li>
+                      <li>• <strong>Real-World Climate Impact</strong> – Directly fund and track verified renewable energy and carbon credit projects.</li>
+                      <li>• <strong>Participatory Governance</strong> – Shape platform decisions through community voting rights.</li>
+                    </ul>
+                  </div>
+
+                  <div className="p-6 rounded-lg border-2" style={{ borderColor: '#41a290', backgroundColor: '#ffffff' }}>
+                    <h3 className="font-semibold mb-4" style={{ color: '#13493f' }}>Important Notes</h3>
+                    <ul className="space-y-2 text-sm text-gray-600">
+                      <li>• <strong>Beta Disclaimer:</strong> This is a testing environment. No real funds will be used in the demo. All tokens, trades, and balances are simulated for demonstration purposes only.</li>
+                      <li>• <strong>Privacy:</strong> Real names are not required. Use your ENS, alias, or wallet nickname if preferred.</li>
+                      <li>• <strong>Jurisdiction:</strong> Some features may be restricted based on your location to comply with applicable laws.</li>
                     </ul>
                   </div>
 

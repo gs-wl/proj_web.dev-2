@@ -21,6 +21,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CacheCleanupAdmin } from '@/components/cache-cleanup-admin';
+import { AdminWalletManager } from '@/components/admin/AdminWalletManager';
 import Image from 'next/image';
 
 interface WhitelistRequest {
@@ -294,6 +295,11 @@ function AdminDashboard() {
         {/* Cache Cleanup Management */}
         <div className="mb-8">
           <CacheCleanupAdmin />
+        </div>
+
+        {/* Admin Wallet Management */}
+        <div className="mb-8">
+          <AdminWalletManager />
         </div>
 
         {/* Requests Table */}

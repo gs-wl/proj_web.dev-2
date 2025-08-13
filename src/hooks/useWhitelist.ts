@@ -16,18 +16,14 @@ export function useWhitelist() {
   useEffect(() => {
     async function loadWhitelist() {
       try {
-        // Dynamically fetch the whitelist to avoid caching issues
+        // Fetch the whitelist from Supabase via API
         const response = await fetch('/api/whitelist');
-        let whitelist: WhitelistData;
         
-        if (response.ok) {
-          whitelist = await response.json();
-        } else {
-          // Fallback to hardcoded whitelist if API fails
-          const whitelistModule = await import('@/data/whitelist.json');
-          whitelist = whitelistModule.default as WhitelistData;
+        if (!response.ok) {
+          throw new Error(`Failed to fetch whitelist: ${response.status}`);
         }
         
+        const whitelist: WhitelistData = await response.json();
         setWhitelistData(whitelist);
         
         console.log('🔍 Whitelist Check Debug:');
@@ -73,8 +69,13 @@ export function useWhitelist() {
 // Utility function to check if an address is whitelisted (for server-side or static checks)
 export async function checkAddressWhitelist(address: string): Promise<boolean> {
   try {
-    const whitelistModule = await import('@/data/whitelist.json');
-    const whitelist = whitelistModule.default as WhitelistData;
+    const response = await fetch('/api/whitelist');
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch whitelist: ${response.status}`);
+    }
+    
+    const whitelist: WhitelistData = await response.json();
     
     return whitelist.whitelistedAddresses
       .map(addr => addr.toLowerCase())

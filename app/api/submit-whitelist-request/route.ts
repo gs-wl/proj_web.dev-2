@@ -3,11 +3,11 @@ import { getSupabase } from '@/lib/supabase';
 
 interface WhitelistRequestInput {
   walletAddress: string;
-  name: string;
+  nickname?: string;
   email: string;
-  company?: string;
-  reason: string;
-  experience?: string;
+  participateAirdrops: boolean;
+  joinCompetitions: boolean;
+  bugBountyInterest: boolean;
 }
 
 function generateRequestId(): string {
@@ -18,12 +18,16 @@ export async function POST(request: Request) {
   try {
     const supabase = getSupabase();
     const body: WhitelistRequestInput = await request.json();
-    const { walletAddress, name, email, company, reason, experience } = body;
+    
+    console.log('📝 Received whitelist request body:', body);
+    
+    const { walletAddress, nickname, email, participateAirdrops, joinCompetitions, bugBountyInterest } = body;
 
     // Validate required fields
-    if (!walletAddress || !name || !email || !reason) {
+    if (!walletAddress || !email) {
+      console.error('❌ Missing required fields:', { walletAddress: !!walletAddress, email: !!email });
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Missing required fields: walletAddress and email are required' },
         { status: 400 }
       );
     }
@@ -37,32 +41,50 @@ export async function POST(request: Request) {
     }
 
     // Check if wallet address already has a request
-    const { data: existingRequest, error: checkError } = await supabase
+    const { data: existingRequests, error: checkError } = await supabase
       .from('whitelist_requests')
-      .select('id, status')
-      .eq('wallet_address', walletAddress.toLowerCase())
-      .single();
+      .select('id, status, email, submitted_at')
+      .eq('wallet_address', walletAddress.toLowerCase());
 
-    if (checkError && checkError.code !== 'PGRST116') { // PGRST116 = no rows found
-      console.error('Error checking existing request:', checkError);
+    if (checkError) {
+      console.error('❌ Error checking existing request:', checkError);
       return NextResponse.json(
         { error: 'Failed to check existing requests' },
         { status: 500 }
       );
     }
 
-    if (existingRequest) {
+    console.log('🔍 Existing requests found:', existingRequests);
+
+    if (existingRequests && existingRequests.length > 0) {
+      const existingRequest = existingRequests[0];
+      
       if (existingRequest.status === 'pending') {
         return NextResponse.json(
-          { error: 'A request for this wallet address is already pending review' },
+          { 
+            error: 'A whitelist request for this wallet address is already pending review',
+            details: {
+              submittedAt: existingRequest.submitted_at,
+              email: existingRequest.email
+            }
+          },
           { status: 409 }
         );
       }
       if (existingRequest.status === 'approved') {
         return NextResponse.json(
-          { error: 'This wallet address is already whitelisted' },
+          { 
+            error: 'This wallet address has already been approved and whitelisted',
+            details: {
+              approvedAt: existingRequest.submitted_at
+            }
+          },
           { status: 409 }
         );
+      }
+      if (existingRequest.status === 'rejected') {
+        // Allow resubmission if previously rejected
+        console.log('📝 Previous request was rejected, allowing resubmission');
       }
     }
 
@@ -90,26 +112,85 @@ export async function POST(request: Request) {
 
     // Create new request
     const requestId = generateRequestId();
-    const { data: newRequest, error: insertError } = await supabase
+    
+    // Try new schema first, fallback to old schema if columns don't exist
+    let insertData: any = {
+      id: requestId,
+      wallet_address: walletAddress.toLowerCase(),
+      email,
+      submitted_at: new Date().toISOString(),
+      status: 'pending'
+    };
+
+    // Try to add new fields, but fallback to old schema if they don't exist
+    try {
+      insertData = {
+        ...insertData,
+        nickname: nickname || null,
+        participate_airdrops: participateAirdrops || false,
+        join_competitions: joinCompetitions || false,
+        bug_bounty_interest: bugBountyInterest || false,
+      };
+    } catch (error) {
+      console.log('📝 Using new schema fields');
+    }
+    
+    console.log('📝 Attempting to insert data:', insertData);
+    
+    let { data: newRequest, error: insertError } = await supabase
       .from('whitelist_requests')
-      .insert({
-        id: requestId,
-        wallet_address: walletAddress.toLowerCase(),
-        name,
-        email,
-        company: company || null,
-        reason,
-        defi_experience: experience || null,
-        submitted_at: new Date().toISOString(),
-        status: 'pending'
-      })
+      .insert(insertData)
       .select()
       .single();
 
+    // If insert failed due to missing columns, try with old schema
+    if (insertError && insertError.code === '42703') { // Column does not exist
+      console.log('📝 New columns not found, trying with old schema...');
+      
+      const oldSchemaData = {
+        id: requestId,
+        wallet_address: walletAddress.toLowerCase(),
+        name: nickname || 'Anonymous',
+        email,
+        company: '',
+        reason: `Participation preferences: Airdrops: ${participateAirdrops}, Competitions: ${joinCompetitions}, Bug Bounty: ${bugBountyInterest}`,
+        defi_experience: '',
+        submitted_at: new Date().toISOString(),
+        status: 'pending'
+      };
+      
+      const result = await supabase
+        .from('whitelist_requests')
+        .insert(oldSchemaData)
+        .select()
+        .single();
+        
+      newRequest = result.data;
+      insertError = result.error;
+    }
+
     if (insertError) {
-      console.error('Error inserting whitelist request:', insertError);
+      console.error('❌ Error inserting whitelist request:', insertError);
+      console.error('❌ Insert error details:', {
+        code: insertError.code,
+        message: insertError.message,
+        details: insertError.details,
+        hint: insertError.hint
+      });
+      
+      // Handle duplicate key constraint violation
+      if (insertError.code === '23505') { // Unique constraint violation
+        return NextResponse.json(
+          { 
+            error: 'A whitelist request for this wallet address already exists. Please check your previous submission or contact support if you believe this is an error.',
+            code: 'DUPLICATE_REQUEST'
+          },
+          { status: 409 }
+        );
+      }
+      
       return NextResponse.json(
-        { error: 'Failed to submit request' },
+        { error: `Failed to submit request: ${insertError.message}` },
         { status: 500 }
       );
     }

@@ -18,18 +18,14 @@ export function useAdmin() {
   useEffect(() => {
     async function loadAdminList() {
       try {
-        // Dynamically fetch the admin list
+        // Fetch the admin list from Supabase via API
         const response = await fetch('/api/admin-wallets');
-        let adminList: AdminData;
         
-        if (response.ok) {
-          adminList = await response.json();
-        } else {
-          // Fallback to hardcoded admin list if API fails
-          const adminModule = await import('@/data/admin-wallets.json');
-          adminList = adminModule.default as AdminData;
+        if (!response.ok) {
+          throw new Error(`Failed to fetch admin wallets: ${response.status}`);
         }
         
+        const adminList: AdminData = await response.json();
         setAdminData(adminList);
         
         console.log('🔍 Admin Check Debug:');

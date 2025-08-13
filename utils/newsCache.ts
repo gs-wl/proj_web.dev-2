@@ -1,7 +1,4 @@
-import fs from 'fs';
-import path from 'path';
-
-const CACHE_FILE_PATH = path.join(process.cwd(), 'src/data/news-cache.json');
+// News cache utilities - now using Supabase instead of local JSON files
 const CACHE_EXPIRY_HOURS = 24;
 
 interface CachedNewsData {
@@ -11,36 +8,21 @@ interface CachedNewsData {
   version: number;
 }
 
-// Function to check and clean expired cache
-export function cleanupExpiredCache(): { cleaned: boolean; message: string } {
+// Function to check and clean expired cache from Supabase
+export async function cleanupExpiredCache(): Promise<{ cleaned: boolean; message: string }> {
   try {
-    if (!fs.existsSync(CACHE_FILE_PATH)) {
-      return {
-        cleaned: false,
-        message: 'No cache file found'
-      };
+    const response = await fetch('/api/news/cleanup', {
+      method: 'POST',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to cleanup cache: ${response.status}`);
     }
 
-    const fileContent = fs.readFileSync(CACHE_FILE_PATH, 'utf8');
-    const cachedData: CachedNewsData = JSON.parse(fileContent);
-
-    // Check if cache is expired
-    if (cachedData.lastUpdated) {
-      const cacheAge = Date.now() - new Date(cachedData.lastUpdated).getTime();
-      const isExpired = cacheAge > (CACHE_EXPIRY_HOURS * 60 * 60 * 1000);
-      
-      if (isExpired) {
-        fs.unlinkSync(CACHE_FILE_PATH);
-        return {
-          cleaned: true,
-          message: `Expired cache file deleted (age: ${Math.round(cacheAge / (60 * 60 * 1000))} hours)`
-        };
-      }
-    }
-
+    const result = await response.json();
     return {
-      cleaned: false,
-      message: 'Cache is still valid'
+      cleaned: result.cleaned || false,
+      message: result.message || 'Cache cleanup completed'
     };
   } catch (error) {
     console.error('Error during cache cleanup:', error);
@@ -51,5 +33,5 @@ export function cleanupExpiredCache(): { cleaned: boolean; message: string } {
   }
 }
 
-export { CACHE_FILE_PATH, CACHE_EXPIRY_HOURS };
+export { CACHE_EXPIRY_HOURS };
 export type { CachedNewsData };

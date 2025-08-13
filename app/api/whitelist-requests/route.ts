@@ -23,7 +23,7 @@ export async function GET() {
     const transformedRequests = (requests || []).map(request => ({
       id: request.id,
       walletAddress: request.wallet_address,
-      name: request.name,
+      name: request.nickname || request.name, // Use nickname if available, fallback to name for backward compatibility
       email: request.email,
       company: request.company,
       reason: request.reason,
