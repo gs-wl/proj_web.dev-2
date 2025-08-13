@@ -8,9 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { CheckCircle, Leaf, Mail, MessageSquare, User, Wallet, ArrowLeft } from 'lucide-react';
+import { CheckCircle, Mail, MessageSquare, User, Wallet, ArrowLeft } from 'lucide-react';
+import Image from 'next/image';
 
-export default function WaitlistPage() {
+export default function WhitelistPage() {
   const { address, isConnected } = useAccount();
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -33,7 +34,7 @@ export default function WaitlistPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       const response = await fetch('/api/submit-whitelist-request', {
         method: 'POST',
@@ -49,9 +50,9 @@ export default function WaitlistPage() {
           experience: formData.experience
         })
       });
-      
+
       const result = await response.json();
-      
+
       if (response.ok) {
         console.log('✅ Whitelist application submitted successfully:', result);
         setIsSubmitted(true);
@@ -69,30 +70,30 @@ export default function WaitlistPage() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-green-50 via-white to-emerald-50">
+      <div className="min-h-screen bg-gradient-to-b from-teal-50 via-white to-teal-50" style={{ background: 'linear-gradient(to bottom, #f0fdfa, #ffffff, #f0fdfa)' }}>
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-2xl mx-auto text-center">
             <div className="mb-8">
-              <CheckCircle className="h-20 w-20 text-green-600 mx-auto mb-4" />
+              <CheckCircle className="h-20 w-20 mx-auto mb-4" style={{ color: '#41a290' }} />
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
                 Application Submitted Successfully!
               </h1>
               <p className="text-xl text-gray-600 mb-8">
-                Thank you for your interest in RWA.defi. We&apos;ve received your whitelist application.
+                Thank you for your interest in W3-Energy. We&apos;ve received your whitelist application.
               </p>
             </div>
 
-            <Card className="border-green-200 shadow-lg">
+            <Card className="shadow-lg" style={{ borderColor: '#41a290' }}>
               <CardContent className="p-8">
                 <div className="space-y-4">
-                  <div className="flex items-center justify-center space-x-2 text-green-700">
+                  <div className="flex items-center justify-center space-x-2" style={{ color: '#13493f' }}>
                     <Wallet className="h-5 w-5" />
                     <span className="font-mono text-sm">{address}</span>
                   </div>
-                  
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-green-800 mb-2">What happens next?</h3>
-                    <ul className="text-sm text-green-700 space-y-2">
+
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: '#f0fdfa' }}>
+                    <h3 className="font-semibold mb-2" style={{ color: '#13493f' }}>What happens next?</h3>
+                    <ul className="text-sm space-y-2" style={{ color: '#13493f' }}>
                       <li>• Our team will review your application within 48 hours</li>
                       <li>• You&apos;ll receive an email notification about your status</li>
                       <li>• Approved wallets will gain immediate access to the platform</li>
@@ -101,10 +102,13 @@ export default function WaitlistPage() {
                   </div>
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-green-200">
-                  <Button 
+                <div className="mt-8 pt-6 border-t" style={{ borderColor: '#41a290' }}>
+                  <Button
                     onClick={() => window.location.href = '/'}
-                    className="bg-green-600 hover:bg-green-700 text-white px-8 py-3"
+                    className="text-white px-8 py-3"
+                    style={{ backgroundColor: '#13493f' }}
+                    onMouseEnter={(e) => (e.target as HTMLButtonElement).style.backgroundColor = '#0f3d35'}
+                    onMouseLeave={(e) => (e.target as HTMLButtonElement).style.backgroundColor = '#13493f'}
                   >
                     Return to Homepage
                   </Button>
@@ -118,7 +122,7 @@ export default function WaitlistPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 via-white to-emerald-50">
+    <div className="min-h-screen bg-gradient-to-b from-teal-50 via-white to-teal-50" style={{ background: 'linear-gradient(to bottom, #f0fdfa, #ffffff, #f0fdfa)' }}>
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto">
           {/* Back Button */}
@@ -126,7 +130,8 @@ export default function WaitlistPage() {
             <Button
               onClick={() => router.push('/')}
               variant="outline"
-              className="border-green-300 text-green-700 hover:bg-green-50"
+              className="hover:bg-teal-50"
+              style={{ borderColor: '#41a290', color: '#13493f' }}
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Homepage
@@ -136,21 +141,27 @@ export default function WaitlistPage() {
           {/* Header */}
           <div className="text-center mb-12">
             <div className="flex items-center justify-center space-x-3 mb-6">
-              <Leaf className="h-10 w-10 text-green-600" />
-              <h1 className="text-4xl font-bold text-gray-900">RWA.defi</h1>
+              <Image 
+                src="/logo/logo.png" 
+                alt="W3-Energy Logo" 
+                width={60} 
+                height={60} 
+                className="h-15 w-15"
+              />
+              <h1 className="text-4xl font-bold text-gray-900">W3-Energy</h1>
             </div>
             <h2 className="text-3xl font-bold text-gray-800 mb-4">
               Join the Whitelist
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Our platform is currently in beta and access is limited to whitelisted wallets. 
+              Our platform is currently in beta and access is limited to whitelisted wallets.
               Apply below to get early access to sustainable DeFi investing.
             </p>
           </div>
 
           {/* Wallet Connection Status */}
           <div className="mb-8 flex justify-center">
-            <Card className="border-green-200">
+            <Card style={{ borderColor: '#41a290' }}>
               <CardContent className="p-6 text-center">
                 {!isConnected ? (
                   <div>
@@ -160,9 +171,9 @@ export default function WaitlistPage() {
                   </div>
                 ) : (
                   <div>
-                    <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-3" />
+                    <CheckCircle className="h-8 w-8 mx-auto mb-3" style={{ color: '#41a290' }} />
                     <p className="text-sm text-gray-600 mb-2">Wallet Connected</p>
-                    <p className="font-mono text-sm bg-gray-100 px-3 py-1 rounded">{address}</p>
+                    <p className="font-mono text-sm px-3 py-1 rounded" style={{ backgroundColor: '#13493f', color: '#ffffff' }}>{address}</p>
                   </div>
                 )}
               </CardContent>
@@ -171,9 +182,9 @@ export default function WaitlistPage() {
 
           {/* Application Form */}
           {isConnected && (
-            <Card className="border-green-200 shadow-lg">
-              <CardHeader className="bg-green-50 border-b border-green-200">
-                <CardTitle className="text-2xl text-green-800 flex items-center space-x-2">
+            <Card className="shadow-lg" style={{ borderColor: '#41a290' }}>
+              <CardHeader className="border-b" style={{ backgroundColor: '#f0fdfa', borderColor: '#41a290' }}>
+                <CardTitle className="text-2xl flex items-center space-x-2" style={{ color: '#13493f' }}>
                   <MessageSquare className="h-6 w-6" />
                   <span>Whitelist Application</span>
                 </CardTitle>
@@ -192,7 +203,9 @@ export default function WaitlistPage() {
                         onChange={handleInputChange}
                         required
                         placeholder="Enter your full name"
-                        className="border-green-200 focus:border-green-500"
+                        style={{ borderColor: '#41a290', backgroundColor: '#ffffff', color: '#13493f' }}
+                        onFocus={(e) => (e.target as HTMLInputElement).style.borderColor = '#13493f'}
+                        onBlur={(e) => (e.target as HTMLInputElement).style.borderColor = '#41a290'}
                       />
                     </div>
 
@@ -208,7 +221,9 @@ export default function WaitlistPage() {
                         onChange={handleInputChange}
                         required
                         placeholder="Enter your email"
-                        className="border-green-200 focus:border-green-500"
+                        style={{ borderColor: '#41a290', backgroundColor: '#ffffff', color: '#13493f' }}
+                        onFocus={(e) => (e.target as HTMLInputElement).style.borderColor = '#13493f'}
+                        onBlur={(e) => (e.target as HTMLInputElement).style.borderColor = '#41a290'}
                       />
                     </div>
                   </div>
@@ -222,7 +237,9 @@ export default function WaitlistPage() {
                       value={formData.company}
                       onChange={handleInputChange}
                       placeholder="Enter your company or organization"
-                      className="border-green-200 focus:border-green-500"
+                      style={{ borderColor: '#41a290', backgroundColor: '#ffffff', color: '#13493f' }}
+                      onFocus={(e) => (e.target as HTMLInputElement).style.borderColor = '#13493f'}
+                      onBlur={(e) => (e.target as HTMLInputElement).style.borderColor = '#41a290'}
                     />
                   </div>
 
@@ -237,7 +254,9 @@ export default function WaitlistPage() {
                       required
                       rows={4}
                       placeholder="Tell us about your interest in sustainable investing and RWA tokens..."
-                      className="border-green-200 focus:border-green-500"
+                      style={{ borderColor: '#41a290', backgroundColor: '#ffffff', color: '#13493f' }}
+                      onFocus={(e) => (e.target as HTMLTextAreaElement).style.borderColor = '#13493f'}
+                      onBlur={(e) => (e.target as HTMLTextAreaElement).style.borderColor = '#41a290'}
                     />
                   </div>
 
@@ -251,13 +270,15 @@ export default function WaitlistPage() {
                       onChange={handleInputChange}
                       rows={3}
                       placeholder="Describe your experience with DeFi, staking, or cryptocurrency (optional)"
-                      className="border-green-200 focus:border-green-500"
+                      style={{ borderColor: '#41a290', backgroundColor: '#ffffff', color: '#13493f' }}
+                      onFocus={(e) => (e.target as HTMLTextAreaElement).style.borderColor = '#13493f'}
+                      onBlur={(e) => (e.target as HTMLTextAreaElement).style.borderColor = '#41a290'}
                     />
                   </div>
 
-                  <div className="bg-green-50 p-6 rounded-lg">
-                    <h3 className="font-semibold text-green-800 mb-3">Platform Benefits</h3>
-                    <ul className="grid md:grid-cols-2 gap-2 text-sm text-green-700">
+                  <div className="p-6 rounded-lg" style={{ backgroundColor: '#f0fdfa' }}>
+                    <h3 className="font-semibold mb-3" style={{ color: '#13493f' }}>Platform Benefits</h3>
+                    <ul className="grid md:grid-cols-2 gap-2 text-sm" style={{ color: '#13493f' }}>
                       <li>• Access to exclusive RWA tokens</li>
                       <li>• Early investor advantages</li>
                       <li>• Sustainable investment opportunities</li>
@@ -271,7 +292,10 @@ export default function WaitlistPage() {
                     <Button
                       type="submit"
                       disabled={isSubmitting}
-                      className="bg-green-600 hover:bg-green-700 text-white px-12 py-3 text-lg"
+                      className="text-white px-12 py-3 text-lg"
+                      style={{ backgroundColor: '#13493f' }}
+                      onMouseEnter={(e) => (e.target as HTMLButtonElement).style.backgroundColor = '#0f3d35'}
+                      onMouseLeave={(e) => (e.target as HTMLButtonElement).style.backgroundColor = '#13493f'}
                     >
                       {isSubmitting ? 'Submitting...' : 'Submit Application'}
                     </Button>
@@ -283,7 +307,7 @@ export default function WaitlistPage() {
 
           {/* Footer */}
           <div className="text-center mt-12 text-gray-600">
-            <p>Questions? Contact us at <a href="mailto:support@rwa.defi" className="text-green-600 hover:underline">support@rwa.defi</a></p>
+            <p>Questions? Contact us at <a href="mailto:whitelist@w3-energy.org" className="hover:underline" style={{ color: '#41a290' }}>whitelist@w3-energy.org</a></p>
           </div>
         </div>
       </div>

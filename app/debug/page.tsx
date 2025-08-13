@@ -93,7 +93,7 @@ export default function DebugPage() {
             {isWhitelisted ? (
               <p className="mt-2 text-green-600">✅ Should show "Launch App" button on homepage</p>
             ) : (
-              <p className="mt-2 text-red-600">❌ Should be redirected to waitlist</p>
+              <p className="mt-2 text-red-600">❌ Should be redirected to whitelist</p>
             )}
           </div>
         )}

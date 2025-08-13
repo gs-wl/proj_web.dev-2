@@ -52,11 +52,11 @@ export function WhitelistGuard({ children }: WhitelistGuardProps) {
           </p>
           <div className="space-y-3">
             <Button 
-              onClick={() => router.push('/waitlist')}
+              onClick={() => router.push('/whitelist')}
               className="w-full bg-green-600 hover:bg-green-700 text-white"
             >
               <UserPlus className="w-4 h-4 mr-2" />
-              Join Waitlist
+              Join Whitelist
             </Button>
             <Button 
               onClick={() => router.push('/')}

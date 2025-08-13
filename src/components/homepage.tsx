@@ -293,9 +293,9 @@ export function Homepage() {
                     <Button
                       variant="outline"
                       className="border-green-600 text-green-600 hover:bg-green-50"
-                      onClick={() => router.push('/waitlist')}
+                      onClick={() => router.push('/whitelist')}
                     >
-                      Join Waitlist
+                      Join Whitelist
                     </Button>
                   )}
                 </>
@@ -320,9 +320,9 @@ export function Homepage() {
                       size="sm"
                       variant="outline"
                       className="border-green-600 text-green-600 hover:bg-green-50"
-                      onClick={() => router.push('/waitlist')}
+                      onClick={() => router.push('/whitelist')}
                     >
-                      Join Waitlist
+                      Join Whitelist
                     </Button>
                   )}
                 </>
@@ -722,9 +722,9 @@ export function Homepage() {
               <Button
                 size="lg"
                 className="bg-white text-green-600 hover:bg-gray-100 px-8 py-4"
-                onClick={() => router.push('/waitlist')}
+                onClick={() => router.push('/whitelist')}
               >
-                Join Waitlist
+                Join Whitelist
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Button>
             )}
