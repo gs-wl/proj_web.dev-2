@@ -56,9 +56,9 @@ class CacheCleanupScheduler {
   /**
    * Run the cleanup function
    */
-  private runCleanup(): void {
+  private async runCleanup(): Promise<void> {
     try {
-      const result = cleanupExpiredCache();
+      const result = await cleanupExpiredCache();
       const timestamp = new Date().toISOString();
       
       if (result.cleaned) {

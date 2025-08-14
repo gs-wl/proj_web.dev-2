@@ -186,7 +186,7 @@ for details.
 
 ## 📞 Support
 
-For support, email support@w3-energy.org or join our Discord community.
+For support, email whitelist@w3-energy.org or join our Discord community.
 
 ---
 
