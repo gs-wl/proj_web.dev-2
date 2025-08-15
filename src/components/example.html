@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Crypto Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <style type="text/tailwindcss">
+      :root {
+        --dark-bg: #121212;
+        --dark-card: #1e1e1e;
+        --primary-accent: #3f51b5;
+        --secondary-accent: #03a9f4;
+        --text-primary: #ffffff;
+        --text-secondary: #b0b0b0;
+        --border-color: #333333;
+        --success-color: #4caf50;
+        --danger-color: #f44336;
+      }
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: var(--dark-bg);
+        color: var(--text-primary);
+      }
+      .pie-chart {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background-image: conic-gradient(
+          var(--primary-accent) 0% 45%,
+          var(--secondary-accent) 45% 75%,
+          var(--success-color) 75% 90%,
+          #ffc107 90% 100%
+        );
+        cursor: pointer;
+      }
+      .pie-slice {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        clip-path: polygon(50% 50%, 50% 0, 100% 0, 100% 50%);
+        transition: transform 0.2s ease-in-out;
+      }
+      .pie-slice:hover,
+      .pie-slice.selected {
+        transform: scale(1.05);
+      }
+    </style>
+  </head>
+  <body class="text-[var(--text-primary)]">
+    <div class="container mx-auto p-4 md:p-8">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold text-[var(--text-primary)]">Dashboard</h1>
+      </header>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-[var(--dark-card)] p-6 rounded-xl shadow-lg">
+          <h3 class="text-lg font-semibold text-[var(--text-secondary)] mb-2">
+            Total Market Cap
+          </h3>
+          <p class="text-3xl font-bold text-[var(--text-primary)]">
+            $1,234,567,890
+          </p>
+        </div>
+        <div class="bg-[var(--dark-card)] p-6 rounded-xl shadow-lg">
+          <h3 class="text-lg font-semibold text-[var(--text-secondary)] mb-2">
+            Total Value Locked
+          </h3>
+          <p class="text-3xl font-bold text-[var(--text-primary)]">
+            $987,654,321
+          </p>
+        </div>
+        <div class="bg-[var(--dark-card)] p-6 rounded-xl shadow-lg">
+          <h3 class="text-lg font-semibold text-[var(--text-secondary)] mb-2">
+            Avg APY
+          </h3>
+          <p class="text-3xl font-bold text-[var(--text-primary)]">12.34%</p>
+        </div>
+        <div class="bg-[var(--dark-card)] p-6 rounded-xl shadow-lg">
+          <h3 class="text-lg font-semibold text-[var(--text-secondary)] mb-2">
+            Total Holders
+          </h3>
+          <p class="text-3xl font-bold text-[var(--text-primary)]">1,234</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <div class="lg:col-span-2">
+          <div class="grid grid-cols-1 gap-8 h-full">
+            <div
+              class="bg-[var(--dark-card)] p-6 rounded-xl shadow-lg flex flex-col"
+            >
+              <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-[var(--text-primary)]">
+                  Trading Chart
+                </h2>
+                <div class="flex space-x-2">
+                  <button
+                    class="text-xs px-3 py-1 rounded-md bg-[#2a2a2a] text-[var(--text-secondary)] hover:bg-[var(--primary-accent)] hover:text-white transition-colors"
+                  >
+                    1H
+                  </button>
+                  <button
+                    class="text-xs px-3 py-1 rounded-md bg-[var(--primary-accent)] text-white"
+                  >
+                    1D
+                  </button>
+                  <button
+                    class="text-xs px-3 py-1 rounded-md bg-[#2a2a2a] text-[var(--text-secondary)] hover:bg-[var(--primary-accent)] hover:text-white transition-colors"
+                  >
+                    1W
+                  </button>
+                  <button
+                    class="text-xs px-3 py-1 rounded-md bg-[#2a2a2a] text-[var(--text-secondary)] hover:bg-[var(--primary-accent)] hover:text-white transition-colors"
+                  >
+                    1M
+                  </button>
+                </div>
+              </div>
+              <div class="flex items-center mb-4">
+                <p class="text-3xl font-bold mr-4">$45,678.90</p>
+                <div class="flex items-center text-[var(--success-color)]">
+                  <span class="material-icons text-lg">arrow_upward</span>
+                  <p class="font-semibold text-lg ml-1">2.54%</p>
+                </div>
+              </div>
+              <div class="chart-container flex-grow">
+                <img
+                  alt="A more detailed green candlestick chart for trading on a dark background, showing highs and lows."
+                  class="w-full h-full object-cover rounded-lg"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOj8g1fPRPMhXYkNwFyX2C8PMRVDcJUayuk_NUQQzBdO5YX7RCP1AL99Vx8FFo_Kl5OGL57BSJbsg0JaXKbh1qy2wOPYLk8c4HAnl_s28l6aVC24EqNelcoTNrxAzTgGl0uxLyk61Bzq0kMkwc7P5Opi1vgXyC1P8FJ_WOOrWYGgLw3mmhEvOK5YEbOHlJbrNbdpaV0QdfhBBEORACEL6JqmNxe7NJl7hUBO9f3a-vo1DWRyeI6OzdMEglg-5OqVOBE_nWh04oLv4"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-8">
+          <div class="bg-[var(--dark-card)] p-6 rounded-xl shadow-lg">
+            <h2 class="text-xl font-bold text-[var(--text-primary)] mb-4">
+              User Staking Summary
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <p class="text-sm text-[var(--text-secondary)]">Total Staked</p>
+                <p class="text-2xl font-semibold text-[var(--text-primary)]">
+                  $50,234.56
+                </p>
+              </div>
+              <div>
+                <p class="text-sm text-[var(--text-secondary)]">
+                  Total Rewards
+                </p>
+                <p class="text-2xl font-semibold text-[var(--text-primary)]">
+                  $2,109.87
+                </p>
+              </div>
+              <div>
+                <p class="text-sm text-[var(--text-secondary)]">Your APY</p>
+                <p class="text-2xl font-semibold text-[var(--text-primary)]">
+                  15.78%
+                </p>
+              </div>
+              <button
+                class="w-full bg-[var(--primary-accent)] text-white font-bold py-3 px-4 rounded-lg hover:bg-opacity-90 transition duration-300"
+              >
+                Manage Stake
+              </button>
+            </div>
+          </div>
+          <div
+            class="bg-[var(--dark-card)] p-6 rounded-xl shadow-lg flex flex-col"
+          >
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-xl font-bold text-[var(--text-primary)]">
+                Asset Performance
+              </h2>
+            </div>
+            <div
+              class="flex-grow flex flex-col md:flex-row items-center justify-center gap-8"
+            >
+              <div
+                class="relative w-48 h-48 md:w-56 md:h-56 flex items-center justify-center"
+              >
+                <div class="pie-chart">
+                  <div
+                    class="pie-slice selected"
+                    style="
+                      --slice-start: 0;
+                      --slice-end: 162;
+                      background-color: var(--primary-accent);
+                      transform: rotate(calc(var(--slice-start) * 1deg));
+                      clip-path: polygon(50% 50%, 50% 0, 100% 0, 100% 50%)
+                        path('M 75 0 A 75 75 0 0 1 75 150 L 75 75 Z');
+                      transform: rotate(0deg);
+                      clip-path: polygon(
+                        50% 50%,
+                        50% 0,
+                        96.9% 25.8%,
+                        96.9% 50%
+                      );
+                      clip-path: path(
+                        'M 75 75 L 75 0 A 75 75 0 0 1 146.5 54.4 L 75 75 Z'
+                      );
+                    "
+                  ></div>
+                  <div
+                    class="pie-slice"
+                    style="
+                      --slice-start: 162;
+                      --slice-end: 270;
+                      background-color: var(--secondary-accent);
+                      transform: rotate(calc(var(--slice-start) * 1deg));
+                      clip-path: path(
+                        'M 75 75 L 75 0 A 75 75 0 0 1 75 150 L 75 75 Z'
+                      );
+                      transform: rotate(162deg);
+                      clip-path: path(
+                        'M 75 75 L 75 0 A 75 75 0 0 1 2.8 100 L 75 75 Z'
+                      );
+                    "
+                  ></div>
+                  <div
+                    class="pie-slice"
+                    style="
+                      --slice-start: 270;
+                      --slice-end: 324;
+                      background-color: var(--success-color);
+                      transform: rotate(calc(var(--slice-start) * 1deg));
+                      clip-path: path(
+                        'M 75 75 L 75 0 A 75 75 0 0 1 75 150 L 75 75 Z'
+                      );
+                      transform: rotate(270deg);
+                      clip-path: path(
+                        'M 75 75 L 75 0 A 75 75 0 0 1 120.5 136.5 L 75 75 Z'
+                      );
+                    "
+                  ></div>
+                  <div
+                    class="pie-slice"
+                    style="
+                      --slice-start: 324;
+                      --slice-end: 360;
+                      background-color: #ffc107;
+                      transform: rotate(calc(var(--slice-start) * 1deg));
+                      clip-path: path(
+                        'M 75 75 L 75 0 A 75 75 0 0 1 75 150 L 75 75 Z'
+                      );
+                      transform: rotate(324deg);
+                      clip-path: path(
+                        'M 75 75 L 75 0 A 75 75 0 0 1 75 0 L 75 75 Z'
+                      );
+                    "
+                  ></div>
+                  <div
+                    class="absolute inset-2.5 bg-[var(--dark-card)] rounded-full flex flex-col items-center justify-center pointer-events-none"
+                  >
+                    <p class="text-sm text-[var(--text-secondary)]">Bitcoin</p>
+                    <p class="text-xl font-bold text-white">45%</p>
+                  </div>
+                </div>
+              </div>
+              <div class="space-y-3 text-sm">
+                <div
+                  class="flex items-center p-2 rounded-lg bg-[#2a2a2a] ring-2 ring-[var(--primary-accent)] cursor-pointer"
+                >
+                  <span
+                    class="w-3 h-3 rounded-full bg-[var(--primary-accent)] mr-3"
+                  ></span>
+                  <span>Bitcoin (BTC) - 45%</span>
+                </div>
+                <div
+                  class="flex items-center p-2 rounded-lg hover:bg-[#2a2a2a] cursor-pointer"
+                >
+                  <span
+                    class="w-3 h-3 rounded-full bg-[var(--secondary-accent)] mr-3"
+                  ></span>
+                  <span>Ethereum (ETH) - 30%</span>
+                </div>
+                <div
+                  class="flex items-center p-2 rounded-lg hover:bg-[#2a2a2a] cursor-pointer"
+                >
+                  <span
+                    class="w-3 h-3 rounded-full bg-[var(--success-color)] mr-3"
+                  ></span>
+                  <span>Cardano (ADA) - 15%</span>
+                </div>
+                <div
+                  class="flex items-center p-2 rounded-lg hover:bg-[#2a2a2a] cursor-pointer"
+                >
+                  <span class="w-3 h-3 rounded-full bg-[#FFC107] mr-3"></span>
+                  <span>Solana (SOL) - 10%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div class="bg-[var(--dark-card)] p-6 rounded-xl shadow-lg">
+          <div
+            class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4"
+          >
+            <h2
+              class="text-xl font-bold text-[var(--text-primary)] mb-2 md:mb-0"
+            >
+              Ecosystem Summary
+            </h2>
+            <div class="flex space-x-2">
+              <select
+                class="bg-[#2a2a2a] border border-[var(--border-color)] text-[var(--text-secondary)] text-sm rounded-lg focus:ring-[var(--primary-accent)] focus:border-[var(--primary-accent)] block w-full p-2.5"
+              >
+                <option selected="">Filter by Asset</option>
+                <option>Asset A</option>
+                <option>Asset B</option>
+              </select>
+              <select
+                class="bg-[#2a2a2a] border border-[var(--border-color)] text-[var(--text-secondary)] text-sm rounded-lg focus:ring-[var(--primary-accent)] focus:border-[var(--primary-accent)] block w-full p-2.5"
+              >
+                <option selected="">Filter by APY</option>
+                <option>High to Low</option>
+                <option>Low to High</option>
+              </select>
+              <select
+                class="bg-[#2a2a2a] border border-[var(--border-color)] text-[var(--text-secondary)] text-sm rounded-lg focus:ring-[var(--primary-accent)] focus:border-[var(--primary-accent)] block w-full p-2.5"
+              >
+                <option selected="">Filter by Duration</option>
+                <option>7 Days</option>
+                <option>30 Days</option>
+              </select>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table
+              class="w-full text-sm text-left text-[var(--text-secondary)]"
+            >
+              <thead
+                class="text-xs text-[var(--text-primary)] uppercase bg-[#2a2a2a]"
+              >
+                <tr>
+                  <th class="px-6 py-3 rounded-l-lg" scope="col">Pool</th>
+                  <th class="px-6 py-3" scope="col">Asset</th>
+                  <th class="px-6 py-3" scope="col">APY</th>
+                  <th class="px-6 py-3 rounded-r-lg" scope="col">Duration</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  class="bg-[var(--dark-card)] border-b border-[var(--border-color)]"
+                >
+                  <td class="px-6 py-4 font-medium text-[var(--text-primary)]">
+                    Green Energy Pool
+                  </td>
+                  <td class="px-6 py-4">GE-Token</td>
+                  <td class="px-6 py-4 text-[var(--success-color)]">18.5%</td>
+                  <td class="px-6 py-4">30 Days</td>
+                </tr>
+                <tr
+                  class="bg-[var(--dark-card)] border-b border-[var(--border-color)]"
+                >
+                  <td class="px-6 py-4 font-medium text-[var(--text-primary)]">
+                    Solar Farm Fund
+                  </td>
+                  <td class="px-6 py-4">SF-Token</td>
+                  <td class="px-6 py-4 text-[var(--success-color)]">12.2%</td>
+                  <td class="px-6 py-4">14 Days</td>
+                </tr>
+                <tr class="bg-[var(--dark-card)]">
+                  <td class="px-6 py-4 font-medium text-[var(--text-primary)]">
+                    Eco Innovate
+                  </td>
+                  <td class="px-6 py-4">EI-Token</td>
+                  <td class="px-6 py-4 text-[var(--success-color)]">22.1%</td>
+                  <td class="px-6 py-4">60 Days</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="bg-[var(--dark-card)] p-6 rounded-xl shadow-lg">
+          <h2 class="text-xl font-bold text-[var(--text-primary)] mb-4">
+            Recent Updates &amp; News
+          </h2>
+          <div class="flex border-b border-[var(--border-color)] mb-4">
+            <button
+              class="flex-1 py-2 text-center text-[var(--primary-accent)] border-b-2 border-[var(--primary-accent)] font-semibold"
+            >
+              Our Blog
+            </button>
+            <button
+              class="flex-1 py-2 text-center text-[var(--text-secondary)] hover:text-[var(--primary-accent)]"
+            >
+              Twitter
+            </button>
+            <button
+              class="flex-1 py-2 text-center text-[var(--text-secondary)] hover:text-[var(--primary-accent)]"
+            >
+              AI News
+            </button>
+          </div>
+          <div class="space-y-4">
+            <div class="flex items-start space-x-4">
+              <span class="material-icons text-[var(--secondary-accent)] mt-1"
+                >article</span
+              >
+              <div>
+                <p class="font-semibold text-[var(--text-primary)]">
+                  New Partnership with EcoInnovate announced.
+                </p>
+                <p class="text-sm text-[var(--text-secondary)]">2 hours ago</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-4">
+              <span class="material-icons text-[var(--secondary-accent)] mt-1"
+                >article</span
+              >
+              <div>
+                <p class="font-semibold text-[var(--text-primary)]">
+                  Q3 2024 Roadmap Update: What's coming next.
+                </p>
+                <p class="text-sm text-[var(--text-secondary)]">1 day ago</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-4">
+              <span class="material-icons text-[var(--secondary-accent)] mt-1"
+                >article</span
+              >
+              <div>
+                <p class="font-semibold text-[var(--text-primary)]">
+                  How we are using blockchain to support sustainable projects.
+                </p>
+                <p class="text-sm text-[var(--text-secondary)]">3 days ago</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

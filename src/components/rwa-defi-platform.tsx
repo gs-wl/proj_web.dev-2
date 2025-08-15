@@ -14,6 +14,7 @@ import { useNewsCache } from '@/hooks/useNewsCache';
 import { StakingPage, NewsPage } from './index';
 import { WalletConnectButton, CompactWalletButton } from './wallet-connect-button';
 import { useTheme } from '@/contexts/theme-context';
+import DashboardPage from './dashboard-page';
 
 
 
@@ -42,7 +43,7 @@ const tokenizedAssets = [
 
 const menuItems = [
   { category: 'Latest', items: [
-      { id: 'market-overview', label: 'Market Overview', icon: Globe, active: true },
+      { id: 'market-overview', label: 'Dashboard', icon: BarChart3, active: true },
       { id: 'news', label: 'News', icon: FileText },
       { id: 'invest', label: 'Invest', icon: Target, badge: 'NEW' }
   ]},
@@ -384,27 +385,10 @@ const Web3RWAPlatform = ({ activeTab: propActiveTab }: Web3RWAPlatformProps = {}
             <StakingPage />
           ) : activeTab === 'news' ? (
             <NewsPage />
+          ) : activeTab === 'market-overview' ? (
+            <DashboardPage />
           ) : (
             <>
-              {/* Stats */}
-              <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                {[
-                  { icon: DollarSign, value: '$847.2M', label: 'Total Value Locked', change: '+12.4% (24h)' },
-                  { icon: Activity, value: '$156.8M', label: '24h Volume', change: '+8.7% (24h)' },
-                  { icon: Coins, value: '14.7%', label: 'Avg APY', change: 'Across all pools' },
-                  { icon: Users, value: '28,456', label: 'Active Users', change: '+5.2% (7d)' },
-                ].map((stat, i) => (
-                  <div key={i} className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="bg-blue-100 dark:bg-blue-950 w-10 h-10 rounded-lg flex items-center justify-center"><stat.icon className="w-5 h-5 text-blue-600" /></div>
-                      <TrendingUp className="w-4 h-4 text-green-500" />
-                    </div>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{stat.value}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</p>
-                    <p className="text-xs text-green-600 dark:text-green-400 mt-1">{stat.change}</p>
-                  </div>
-                ))}
-              </section>
 
               {/* Search & filters */}
               <section className="flex flex-col lg:flex-row gap-4 mb-6">

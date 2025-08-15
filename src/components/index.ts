@@ -43,6 +43,11 @@ export { default as StakingPage } from './staking-page';
  */
 export { default as NewsPage } from './news-page';
 
+/**
+ * Enhanced dashboard page with trading charts, staking summary, and analytics
+ */
+export { default as DashboardPage } from './dashboard-page';
+
 // =============================================================================
 // MODAL COMPONENTS
 // =============================================================================
