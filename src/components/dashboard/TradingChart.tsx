@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { TrendingUp, ArrowUpward } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 
 interface TradingChartProps {
   currentPrice: string;
